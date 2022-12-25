@@ -4,67 +4,72 @@ import React, {
   ReactChild,
   SetStateAction,
   useState,
-} from "react";
+} from 'react'
 
 type signUpValue = {
-  email: string;
-  password: string | number;
-  repassword?: string | number;
-  gender?: string;
-};
-type signupInputType = { email: string; password: string; rePassword: string };
+  email: string
+  password: string | number
+  repassword?: string | number
+  gender?: string
+}
+type signupInputType = { email: string; password: string; rePassword: string }
 
 export type appType = {
-  userEmail: string;
-  setUserEmail: Dispatch<SetStateAction<string>>;
-  userPassword: string;
-  setUserPassword: Dispatch<SetStateAction<string>>;
-  loginInput: { userId: string; password: string };
-  setLoginInput: Dispatch<SetStateAction<{ userId: string; password: string }>>;
+  userEmail: string
+  setUserEmail: Dispatch<SetStateAction<string>>
+  userPassword: string
+  setUserPassword: Dispatch<SetStateAction<string>>
+  loginInput: { userId: string; password: string }
+  setLoginInput: Dispatch<SetStateAction<{ userId: string; password: string }>>
   signupSecondInput: {
-    nickname: string;
-    userId: string;
-    password: string;
-    email: string;
-  };
+    nickname: string
+    userId: string
+    password: string
+    email: string
+  }
   setSignupSecondInput: Dispatch<
     SetStateAction<{
-      nickname: string;
-      userId: string;
-      password: string;
-      email: string;
+      nickname: string
+      userId: string
+      password: string
+      email: string
     }>
-  >;
-  signUpValue: signUpValue | undefined;
-  setSignUpValue: Dispatch<SetStateAction<signUpValue | undefined>>;
-  signupInputText: signupInputType;
-  setSignupInput: Dispatch<SetStateAction<signupInputType>>;
-};
+  >
+  signUpValue: signUpValue
+  setSignUpValue: Dispatch<SetStateAction<signUpValue>>
+  signupInputText: signupInputType
+  setSignupInput: Dispatch<SetStateAction<signupInputType>>
+}
 
-export const AuthMainContext = createContext<appType | null>(null);
+export const AuthMainContext = createContext<appType | null>(null)
 export function AuthMainStore({
   children,
 }: {
-  children: ReactChild;
+  children: ReactChild
 }): JSX.Element {
   // login
-  const [userEmail, setUserEmail] = useState("");
-  const [userPassword, setUserPassword] = useState("");
-  const [loginInput, setLoginInput] = useState({ userId: "", password: "" });
+  const [userEmail, setUserEmail] = useState('')
+  const [userPassword, setUserPassword] = useState('')
+  const [loginInput, setLoginInput] = useState({ userId: '', password: '' })
 
   // signup second
   const [signupSecondInput, setSignupSecondInput] = useState({
-    nickname: "",
-    userId: "",
-    password: "",
-    email: "",
-  });
-  const [signUpValue, setSignUpValue] = useState<signUpValue | undefined>();
+    nickname: '',
+    userId: '',
+    password: '',
+    email: '',
+  })
+  const [signUpValue, setSignUpValue] = useState<signUpValue>({
+    email: '',
+    password: '',
+    repassword: '',
+    gender: '',
+  })
   const [signupInputText, setSignupInput] = useState({
-    email: "",
-    password: "",
-    rePassword: "",
-  });
+    email: '',
+    password: '',
+    rePassword: '',
+  })
 
   return (
     <AuthMainContext.Provider
@@ -82,9 +87,8 @@ export function AuthMainStore({
         setSignUpValue,
         signupInputText,
         setSignupInput,
-      }}
-    >
+      }}>
       {children}
     </AuthMainContext.Provider>
-  );
+  )
 }

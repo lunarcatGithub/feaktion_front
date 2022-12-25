@@ -300,6 +300,7 @@ export default function Main({
     if ([400, 403, 404, 500, 502].includes(mainGetData?.status)) {
       // login 화면으로 이동
       asyncDispatch({ type: AsyncCallType.REMOVE, key: 'token' })
+      console.log('>>>>>>>>>>>>>>>>>> check')
       setUserToken(false)
       return
     }

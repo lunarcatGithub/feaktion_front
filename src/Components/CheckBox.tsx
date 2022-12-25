@@ -40,7 +40,8 @@ const CheckBoxButton = styled.TouchableOpacity<{ toggle: boolean }>`
   width: 100%;
   height: 100%;
   border: 1px solid ${({ theme }) => theme.color.purple4};
-  background: ${({ theme, toggle }) => (toggle ? theme.color.purple4 : null)};
+  background-color: ${({ theme, toggle }) =>
+    toggle ? theme.color.purple4 : 'inherit'};
   border-radius: 4px;
 `
 

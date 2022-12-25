@@ -60,8 +60,20 @@ const ToggleButton = styled.TouchableOpacity<{ toggle: string; value: string }>`
   height: 100%;
   border: ${({ theme, toggle, value }) =>
     value === toggle && `2px solid ${theme.color.purple4}`};
-  border-radius: ${({ value }) =>
-    value === 'left' ? `4px 0 0 4px` : `0 4px 4px 0`};
+
+  ${({ value }) => {
+    if (value === 'left') {
+      return {
+        'border-top-left-radius': '4px',
+        'border-bottom-left-radius': '4px',
+      }
+    } else {
+      return {
+        'border-top-right-radius': '4px',
+        'border-bottom-right-radius': '4px',
+      }
+    }
+  }}
 `
 
 const ToggleButtonText = styled.Text<{ styling: boolean }>`

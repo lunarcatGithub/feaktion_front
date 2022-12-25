@@ -40,7 +40,7 @@ import { Bottom } from '@Components/Bottom/Bottom'
 import theme from '~/Styles/Theme'
 // Store
 import AllStores from '@Store/AllStores'
-import Config from 'react-native-config'
+import { asyncStorageUtil, MethodEnum } from './Utils/asyncStorageUtil'
 
 const queryClient = new QueryClient()
 
@@ -59,9 +59,7 @@ export const AuthContext = createContext<authPatch | null>(null)
 
 const App = (): JSX.Element => {
   // hooks
-  const [asyncHandler, _result] = useAsyncStorage()
   const [userToken, setUserToken] = useState<boolean | undefined>(undefined)
-  console.log(Config.MODE)
   /**
    * 하단 탭 NAV 관리
    */
@@ -79,10 +77,27 @@ const App = (): JSX.Element => {
     // bottom nav
     <BottomTabs.Navigator tabBar={props => <Bottom {...props} />}>
       {TabsBottomList?.map(tabsBottom => (
-        <BottomTabs.Screen {...tabsBottom} />
+        <BottomTabs.Screen
+          options={{
+            headerShown: false,
+          }}
+          {...tabsBottom}
+        />
       ))}
     </BottomTabs.Navigator>
   )
+
+  /**
+   * HOC에 접근하기 전 로딩 스플래시 화면
+   */
+
+  const loadingPointHandler = async () => {
+    const resultToken = await asyncStorageUtil({
+      method: MethodEnum.GET,
+      key: 'token',
+    })
+    console.log('resultToken', resultToken)
+  }
 
   /**
    * 모든 네비게이션이 통하는 관리 포인트
@@ -110,18 +125,18 @@ const App = (): JSX.Element => {
   )
   const [loading, setLoading] = useState(true)
 
-  useEffect(() => {
-    // token 자동 로그인
-    setLoading(true)
-    if (!_result?.result) {
-      setLoading(false)
-      setUserToken(false)
-      return
-    }
-    const parse = JSON.parse(_result?.result)
-    setUserToken(parse === 'true')
-    setLoading(false)
-  }, [_result])
+  // useEffect(() => {
+  //   // token 자동 로그인
+  //   setLoading(true)
+  //   if (!_result?.result) {
+  //     setLoading(false)
+  //     setUserToken(false)
+  //     return
+  //   }
+  //   const parse = JSON.parse(_result?.result)
+  //   setUserToken(parse === 'true')
+  //   setLoading(false)
+  // }, [])
 
   const AuthDivideScreen = (): JSX.Element => {
     // if (loading || userToken === undefined) {
@@ -158,12 +173,13 @@ const App = (): JSX.Element => {
   useEffect(() => {
     SplashScreen.hide()
     setCustomText(customTextProps)
-
     requestNotifications(['alert', 'sound']).then(({ status, settings }) => {
       usePermission()
     })
+  }, [])
 
-    asyncHandler('GET', 'token')
+  useEffect(() => {
+    loadingPointHandler()
   }, [])
 
   return (

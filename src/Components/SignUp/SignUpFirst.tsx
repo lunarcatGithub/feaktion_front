@@ -11,8 +11,9 @@ import { useAuthMainContext } from '~/Hooks/useContextHook'
 // types
 import { loginType } from 'authTypeModule'
 import InputBundle from '../Common/InputBundle'
-import useMutationHook from '~/Hooks/useMutationHook'
+import { MethodMytateEnum, useMutationHook } from '~/Hooks/useMutationHook'
 import usePasswordValidityCheck from '~/Hooks/usePasswordValidityCheck'
+import { signupValidateChecktAgent } from '~/Agent/AuthAent'
 
 export function SignUpFirst({ navigation }: any): JSX.Element {
   // store
@@ -22,8 +23,6 @@ export function SignUpFirst({ navigation }: any): JSX.Element {
   // hook
   const [emailValue, getEmailValue] = emailRegexp()
 
-  // fetch
-  // const { mutate, data, isError, isLoading, isSuccess } = useMutation('usercheck', (check:{}) => useFetch('/user/idexistcheck', 'post', check))
   // validate
   const type = usePasswordValidityCheck(
     signupInputText?.password,
@@ -31,7 +30,7 @@ export function SignUpFirst({ navigation }: any): JSX.Element {
   )
 
   // fetch
-  const { mutateAsync } = useMutationHook('post')
+  const signupMutate = useMutationHook(MethodMytateEnum.POST)
 
   // button active
   const [buttonActive, setButtonActive] = useState(false)
@@ -46,7 +45,7 @@ export function SignUpFirst({ navigation }: any): JSX.Element {
     setSignupInput({ ...signupInputText, [type]: text })
   }
 
-  const nextButtonHandler = (): void => {
+  const nextButtonHandler = async (): Promise<void> => {
     // 유효성 검사
 
     if (!emailValue) {
@@ -68,20 +67,19 @@ export function SignUpFirst({ navigation }: any): JSX.Element {
 
     if (!buttonActive) return
 
-    setSignUpValue(signupInputText)
-    setAlertText({ type: '', text: '' })
-    const data = { email: signupInputText?.email }
-
-    mutateAsync({ url: '/user/idexistcheck', data }).then(result => {
-      if ([200, 201].includes(result?.status)) {
-        navigation.navigate('SignUpSecond')
-      } else if ([400, 401, 404].includes(result?.status)) {
-        setAlertText({
-          type: 'rePassword',
-          text: '이미 존재하거나 탈퇴한 회원입니다',
-        })
-      }
+    const result = await signupValidateChecktAgent({
+      email: signupInputText?.email,
+      mutate: signupMutate,
     })
+
+    if (result?.type === 'SignUpSecond') {
+      // 유효성 체크한 회원가입 정보 넘기기
+      setSignUpValue(signupInputText)
+      navigation.navigate('SignUpSecond')
+      return
+    }
+
+    setAlertText(result)
   }
 
   useEffect(() => {
@@ -127,7 +125,7 @@ export function SignUpFirst({ navigation }: any): JSX.Element {
       alert: alertText,
     },
   ]
-
+  console.log('alertText', alertText)
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <Layout>

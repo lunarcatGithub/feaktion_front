@@ -12,17 +12,17 @@ import KakaoIcon from '@Icons/kakao_small.svg'
 import { useAppContext } from '~/Hooks/useContextHook'
 
 export function SocialLayout(): JSX.Element {
-  // const { animationMove, setAnimationMove } = useAppContext()
+  const { animationMove, setAnimationMove } = useAppContext()
 
-  // const developing = () => {
-  //   if (animationMove?.loading) return
-  //   setAnimationMove({
-  //     type: 'NOTCOMPLETE',
-  //     value: -80,
-  //     bool: true,
-  //     loading: true,
-  //   })
-  // }
+  const developing = () => {
+    if (animationMove?.loading) return
+    setAnimationMove({
+      type: 'NOTCOMPLETE',
+      value: -80,
+      bool: true,
+      loading: true,
+    })
+  }
 
   return (
     <SocialLoginWarp>
@@ -32,19 +32,19 @@ export function SocialLayout(): JSX.Element {
         <TitleLine />
       </SocialTitleWrap>
       <SocialButtonWrap>
-        {/* <DevButton>
+        <DevButton>
           <KakaoButtonWrapButton onPress={developing}>
             <KakaoIcon width={20} height={20} />
           </KakaoButtonWrapButton>
-        </DevButton> */}
-        {/* <DevButton>
+        </DevButton>
+        <DevButton>
           <ButtonWrapButton onPress={developing}>
             <NaverIcon width={40} height={40} />
           </ButtonWrapButton>
-        </DevButton> */}
-        {/* <ButtonWrapButton onPress={developing}>
+        </DevButton>
+        <ButtonWrapButton onPress={developing}>
           <GoogleIcon width={40} height={40} />
-        </ButtonWrapButton> */}
+        </ButtonWrapButton>
       </SocialButtonWrap>
       {/* <SocialButtonWrap>
           <LargeButton

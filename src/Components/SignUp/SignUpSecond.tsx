@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react'
+import React, { useState, useEffect } from 'react'
 import styled from 'styled-components/native'
 import { TouchableWithoutFeedback, Keyboard } from 'react-native'
 
@@ -8,15 +8,13 @@ import { CheckBox } from '../CheckBox'
 import { LargeButton } from '../Button'
 import { InputText } from '../Input'
 
-// store
-
 // hooks
 import { useAppContext, useAuthMainContext } from '~/Hooks/useContextHook'
 
 // types
 import { loginType } from 'authTypeModule'
-import { useMutation } from 'react-query'
-import useFetch from '~/Hooks/useAxiosFetch'
+import { signupAgent, signupType } from '~/Agent/AuthAent'
+import { MethodMytateEnum, useMutationHook } from '~/Hooks/useMutationHook'
 
 export default function SignUpSecond({ navigation }: any): JSX.Element {
   // store
@@ -24,9 +22,7 @@ export default function SignUpSecond({ navigation }: any): JSX.Element {
   const { signupSecondInput, setSignupSecondInput, signUpValue } =
     useAuthMainContext()
 
-  const mutation = useMutation((signup: {}) =>
-    useFetch({ url: '/user/signup', method: 'post', data: signup })
-  )
+  const signupMutate = useMutationHook(MethodMytateEnum.POST)
 
   // button active
   const [buttonActive, setButtonActive] = useState(false)
@@ -69,8 +65,17 @@ export default function SignUpSecond({ navigation }: any): JSX.Element {
     setSignupSecondInput({ ...signupSecondInput, [type]: value })
   }
 
-  const signUpButtonHandler = (): void => {
+  const signUpButtonHandler = async (): Promise<void> => {
     // navigation & 경고 text 부분
+
+    const params: signupType = {
+      signupSecondInput,
+      signUpValue,
+      pickGender,
+      termCheck,
+      serviceCheck,
+      mutate: signupMutate,
+    }
 
     if (signupSecondInput?.nickname?.length <= 1) {
       setAlertText({
@@ -98,24 +103,21 @@ export default function SignUpSecond({ navigation }: any): JSX.Element {
       return
     }
 
-    setAlertText({ type: '', text: '' })
+    // setAlertText({ type: '', text: '' })
     if (!buttonActive) return
 
-    mutation?.mutate({
-      email: signUpValue?.email,
-      id: signupSecondInput?.userId,
-      password: signUpValue?.password,
-      nickname: signupSecondInput?.nickname,
-      sex: pickGender,
-      agree_info: termCheck,
-      agree_service: serviceCheck,
-    })
+    const result = await signupAgent({ ...params })
+
+    if (result.type === '') {
+    }
+
+    setAlertText(result)
   }
 
   useEffect(() => {
     // 버튼 active ctrl
     const { nickname, userId } = signupSecondInput
-    if (nickname?.length > 1 && userId?.length > 5 && allCheck) {
+    if (nickname.length > 1 && userId.length > 5 && allCheck) {
       setButtonActive(true)
     } else {
       setButtonActive(false)
@@ -139,23 +141,6 @@ export default function SignUpSecond({ navigation }: any): JSX.Element {
       setTermCheck(true)
     }
   }, [allCheck])
-
-  useEffect(() => {
-    // 회원가입2 에러
-    if (mutation?.isError)
-      setAlertText({ type: 'rePassword', text: '다시 시도해주세요' })
-  }, [mutation?.isError])
-
-  useEffect(() => {
-    // email check 결과
-    if (!mutation?.data) return
-    if (![200, 201].includes(mutation?.data?.status)) {
-      setAlertText({ type: 'userId', text: '이미 존재하는 아이디입니다' })
-      return
-    } else {
-      navigation.navigate('DoLogin')
-    }
-  }, [mutation?.data, mutation?.isSuccess])
 
   const naviHandler = (type: string) => {
     if (type === 'All') return
@@ -296,7 +281,7 @@ const GenderWrap = styled.View`
 
 const GenderText = styled.Text`
   color: ${({ theme }) => theme.color.gray2};
-  font-family: ${({ theme }) => theme.font.robotoMedium};
+  /* font-family: ${({ theme }) => theme.font.robotoMedium}; */
   font-size: ${({ theme }) => theme.fontSize.font14};
 `
 
@@ -319,7 +304,7 @@ const CheckBoxWrap = styled.View`
 
 const CheckBoxText = styled.Text`
   font-size: ${({ theme }) => theme.fontSize.font14};
-  font-family: ${({ theme }) => theme.font.ptdMedium};
+  /* font-family: ${({ theme }) => theme.font.ptdMedium}; */
   color: ${({ theme }) => theme.color.white};
   margin-left: 8px;
 `

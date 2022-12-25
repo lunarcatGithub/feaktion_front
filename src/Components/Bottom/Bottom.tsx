@@ -77,12 +77,11 @@ export function Bottom({ state, navigation }: any): JSX.Element {
     // 향후 전역으로 유저 메일 포함해서 뿌려주기
     if (!userData?.data) {
       asyncDispatch({ type: AsyncCallType.REMOVE, key: 'token' })
-      setUserToken(false)
+      // setUserToken(false)
       return
     }
     setGetUser(userData?.data?.data?.data)
-  }, [userData])
-  console.log('userData >>  ', userData)
+  }, [])
 
   useEffect(() => {
     // image 삽입을 위한 url

@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect, useCallback } from 'react'
+import React, { useState, useEffect } from 'react'
 import styled from 'styled-components/native'
 import { Keyboard, TouchableWithoutFeedback } from 'react-native'
 
@@ -8,22 +8,17 @@ import { SocialLayout } from '~/Components/Login/SocialLayout'
 import { InputText } from '../Input'
 
 // hooks
-import useMutationHook from '~/Hooks/useMutationHook'
+import { MethodMytateEnum, useMutationHook } from '~/Hooks/useMutationHook'
 import { useAuthMainContext } from '~/Hooks/useContextHook'
-import useAsyncStorage from '~/Hooks/useAsyncStorage'
-
-// store
-import { AuthContext } from '~/App'
+import useAsyncStorage from '@Hooks/useAsyncStorage'
 
 // types
 import { loginType } from 'authTypeModule'
-import axios from 'axios'
+import { loginAgent } from '~/Agent/AuthAent'
 
 export default function Login({ navigation }: any): JSX.Element {
-  // reducer
-  const { setUserToken } = useContext(AuthContext)
-  // const { setSignUpValue } = useContext(AppContext);
   const { loginInput, setLoginInput } = useAuthMainContext()
+  const [asyncStorageHandler, _result] = useAsyncStorage()
 
   // button active
   const [buttonActive, setButtonActive] = useState<boolean>(false)
@@ -35,13 +30,9 @@ export default function Login({ navigation }: any): JSX.Element {
   })
 
   // fetch
-  // const { data, isLoading, isError, mutateAsync } = useMutation((user:{}) => useFetch('/user/signin', 'post', user))
-  const loginMutate = useMutationHook('post')
+  const loginMutate = useMutationHook(MethodMytateEnum.POST)
 
-  // hooks
-  const [asyncHandler, _result] = useAsyncStorage()
-
-  const textMergeHandler = (type: string, text: string): void => {
+  const loginInputTextHandler = (type: string, text: string): void => {
     if (type === 'userId') {
       setLoginInput({ ...loginInput, userId: text })
     } else if (type === 'password') {
@@ -49,30 +40,38 @@ export default function Login({ navigation }: any): JSX.Element {
     }
   }
 
-  const LoginHandler = (): void => {
-    // axios({ method: 'GET', url: `localhost:3000` });
-
+  const LoginHandler = async () => {
     // 로그인 & alert text
     const { userId, password } = loginInput
+
+    // 버튼 활성화 안되어있을 경우
+    if (buttonActive === false) return
+
+    // 입력란이 비어있을 경우
     if (!userId || userId.length === 0) {
       setAlertText({
         type: 'userId',
         text: '아이디 또는 이메일을 입력해 주세요',
       })
-    } else if (!password || password.length < 7) {
-      setAlertText({ type: 'password', text: '최소 8자 이상 입력해 주세요' })
       return
-    } else {
-      loginMutate
-        ?.mutateAsync({
-          url: '/user/signin',
-          data: { email: userId, password },
-        })
-        .then((data: { status: number }) => loginAfterHandler(data))
+    }
+    // 8자 미만 미입력 경우
+    if (!password || password.length < 7) {
+      setAlertText({ type: 'password', text: '최소 8자 이상 입력해 주세요' })
       return
     }
 
-    if (!buttonActive) return
+    //
+    const loginFetchResult = await loginAgent({
+      userId,
+      password,
+      mutate: loginMutate,
+    })
+    if (loginFetchResult.type === '') {
+      // asyncStorageHandler("SET", "token", )
+    }
+    setAlertText(loginFetchResult)
+    return
   }
 
   const signupHandler = () => {
@@ -82,35 +81,6 @@ export default function Login({ navigation }: any): JSX.Element {
       text: '',
     })
     navigation.navigate('SignUp')
-  }
-
-  const loginAfterHandler = (data: { status: number }) => {
-    const { userId } = loginInput
-    if ([200, 201].includes(data?.status)) {
-      asyncHandler('SET', 'token', JSON.stringify(true))
-      asyncHandler('SET', 'profile', JSON.stringify({ id: userId }))
-
-      setUserToken(true)
-      return
-    } else if ([404].includes(data?.status)) {
-      setAlertText({
-        type: 'userId',
-        text: '탈퇴했거나 존재하지 않는 아이디입니다',
-      })
-      return
-    } else if ([400, 401].includes(data?.status)) {
-      setAlertText({
-        type: 'userId',
-        text: '로그인 입력 정보를 다시 확인해 주세요',
-      })
-      return
-    } else if ([500, 501, 502].includes(data?.status)) {
-      setAlertText({
-        type: 'userId',
-        text: '서버에 문제가 발생했습니다. 잠시 후 다시 로그인해주세요',
-      })
-      return
-    }
   }
 
   useEffect(() => {
@@ -144,67 +114,58 @@ export default function Login({ navigation }: any): JSX.Element {
     },
   ]
 
-  useEffect(() => {
-    asyncHandler('GET', 'token')
-  }, [])
+  const inputLayoutArea = () => {
+    return (
+      <LoginInputWrap>
+        {InputArr?.map(
+          (
+            { type, secure, placeholder, removeBtn, maxLength, value, alert },
+            i
+          ) => (
+            <InputLayout key={i}>
+              <InputText
+                secure={secure}
+                placeholder={placeholder}
+                removeBtn={removeBtn}
+                maxLength={maxLength}
+                onChangeText={text => loginInputTextHandler(type, text)}
+                value={value}
+                type="removeBtn"
+                onPress={() => console.log('')}
+              />
+              {alert.type === type && alert.text ? (
+                <AlertText>{alert.text}</AlertText>
+              ) : null}
+            </InputLayout>
+          )
+        )}
+        <TextButtonWrap>
+          <TextButton onPress={() => navigation.navigate('RePassword')}>
+            <RePassword>비밀번호 재설정</RePassword>
+          </TextButton>
+        </TextButtonWrap>
+        <LargeButton
+          buttonText={'로그인하기'}
+          active={buttonActive}
+          onPress={() => LoginHandler()}
+        />
+      </LoginInputWrap>
+    )
+  }
 
   return (
-    <>
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <Layout>
-          <LoginInputWrap>
-            {InputArr?.map(
-              (
-                {
-                  type,
-                  secure,
-                  placeholder,
-                  removeBtn,
-                  maxLength,
-                  value,
-                  alert,
-                },
-                i
-              ) => (
-                <InputLayout key={i}>
-                  <InputText
-                    secure={secure}
-                    placeholder={placeholder}
-                    removeBtn={removeBtn}
-                    maxLength={maxLength}
-                    onChangeText={text => textMergeHandler(type, text)}
-                    value={value}
-                    type="removeBtn"
-                    onPress={() => console.log('')}
-                  />
-                  {alert.type === type && alert.text ? (
-                    <AlertText>{alert.text}</AlertText>
-                  ) : null}
-                </InputLayout>
-              )
-            )}
-            <TextButtonWrap>
-              <TextButton onPress={() => navigation.navigate('RePassword')}>
-                <RePassword>비밀번호 재설정</RePassword>
-              </TextButton>
-            </TextButtonWrap>
-            <LargeButton
-              buttonText={'로그인하기'}
-              active={buttonActive}
-              onPress={() => LoginHandler()}
-            />
-          </LoginInputWrap>
-          <SocialLayout />
-          <DoSignUpTitleWrap>
-            <Title>아직 계정이 없으신가요? </Title>
-            <SignUpButton onPress={() => signupHandler()}>
-              <ButtonTitle>회원가입</ButtonTitle>
-            </SignUpButton>
-          </DoSignUpTitleWrap>
-        </Layout>
-      </TouchableWithoutFeedback>
-      {/* { isLoading ? <StackLoading /> : null } */}
-    </>
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <Layout>
+        {inputLayoutArea()}
+        <SocialLayout />
+        <DoSignUpTitleWrap>
+          <Title>아직 계정이 없으신가요? </Title>
+          <SignUpButton onPress={() => signupHandler()}>
+            <ButtonTitle>회원가입</ButtonTitle>
+          </SignUpButton>
+        </DoSignUpTitleWrap>
+      </Layout>
+    </TouchableWithoutFeedback>
   )
 }
 

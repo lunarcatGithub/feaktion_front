@@ -5,7 +5,7 @@ import { LargeButton } from '../Button'
 
 type Props = {
   type: string
-  _type: string
+  _type?: string
   secure: boolean
   placeholder: string
   removeBtn: boolean
@@ -16,9 +16,9 @@ type Props = {
 
 type HOCProps = {
   onChangeText: (type: string, text: string) => void
-  buttonActive?: boolean
-  buttonText?: string
-  buttonOnPress?: () => void
+  buttonActive: boolean
+  buttonText: string
+  buttonOnPress: () => void
   interval?: number
   data: Props[]
 }
@@ -65,6 +65,7 @@ export default function InputBundle({
           </InputLayout>
         )
       )}
+
       <ButtonWrap interval={interval}>
         <LargeButton
           active={buttonActive}

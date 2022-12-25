@@ -144,7 +144,7 @@ const styles = StyleSheet.create({
     height: 32,
     // backgroundColor:theme.color.gray6,
     transform: [{ translateX: 32 }],
-    borderRadius: 50,
+    // borderRadius: 50,
   },
   viewContainer: {
     height: 32,

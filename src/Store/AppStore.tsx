@@ -1,109 +1,104 @@
-import React, {
-  useState,
-  createContext,
-  Dispatch,
-  SetStateAction,
-} from 'react';
+import React, { useState, createContext, Dispatch, SetStateAction } from 'react'
 
 type getUserType = {
   user_interest: {
-    id: number;
-    user_id: number;
-    interest: string;
-  }[];
-};
-type Arr = { index: number; value: string; title: string }[];
+    id: number
+    user_id: number
+    interest: string
+  }[]
+}
+type Arr = { index: number; value: string; title: string }[]
 type animationType = {
-  value: number;
-  type: string;
-  bool: boolean;
-  loading: boolean;
-};
+  value: number
+  type: string
+  bool: boolean
+  loading: boolean
+}
 type userProfiletype = {
-  user_id: number;
-  id: string;
-  email: string;
-  password: string;
-  nickname: string;
-  sex: string;
-  profile: string;
-  intro: string;
-  regdate: Date;
-  user_interest: never[];
-};
+  user_id: number
+  id: string
+  email: string
+  password: string
+  nickname: string
+  sex: string
+  profile: string
+  intro: string
+  regdate: Date
+  user_interest: never[]
+}
 
 type toastType = {
-  type: string;
-  modalType: string;
-  data: { index: number; desc: string; value: string }[];
-  onPress: () => void;
-};
+  type: string
+  modalType: string
+  data: { index: number; desc: string; value: string }[]
+  onPress: () => void
+}
 
 export type appType = {
-  pickGender: string | null;
-  setPickGender: Dispatch<SetStateAction<string>>;
-  headerName: string;
-  setHeaderName: (name: string) => void;
-  genreMaleArr: Arr;
-  genreFemaleArr: Arr;
-  userPickGenre: genreList;
-  setUserPickGenre: Dispatch<SetStateAction<genreList>>;
-  uploadGenre: string[];
-  setUploadGenre: Dispatch<SetStateAction<never[]>>;
-  thirdPickGenre: genreList;
-  setThirdPickGenre: Dispatch<SetStateAction<never[]>>;
-  oneMorePickGenre: genreList;
-  setOneMorePickGenre: Dispatch<SetStateAction<genreList>>;
-  isDropdownModal: boolean;
-  setIsDropdownModal: Dispatch<SetStateAction<boolean>>;
-  animationMove: animationType;
-  setAnimationMove: Dispatch<SetStateAction<animationType>>;
-  userProfile: userProfiletype;
-  setUserProfile: Dispatch<SetStateAction<userProfiletype>>;
-  toastPopup: toastType;
-  setToastPopup: Dispatch<SetStateAction<toastType>>;
-  isToastPopup: boolean;
-  setIsToastPopup: Dispatch<SetStateAction<boolean>>;
-  headerScroll: number;
-  setHeaderScroll: Dispatch<SetStateAction<number>>;
-  getUser: getUserType | null;
-  setGetUser: Dispatch<SetStateAction<getUserType | null>>;
-  putImageUrl: string;
-  setPutImageUrl: Dispatch<SetStateAction<string>>;
-  getImageUrl: string;
-  setGetImageUrl: Dispatch<SetStateAction<string>>;
-  initBright: number;
-  setInitBright: Dispatch<SetStateAction<number>>;
-};
+  pickGender: string
+  setPickGender: Dispatch<SetStateAction<string>>
+  headerName: string
+  setHeaderName: (name: string) => void
+  genreMaleArr: Arr
+  genreFemaleArr: Arr
+  userPickGenre: genreList
+  setUserPickGenre: Dispatch<SetStateAction<genreList>>
+  uploadGenre: string[]
+  setUploadGenre: Dispatch<SetStateAction<never[]>>
+  thirdPickGenre: genreList
+  setThirdPickGenre: Dispatch<SetStateAction<never[]>>
+  oneMorePickGenre: genreList
+  setOneMorePickGenre: Dispatch<SetStateAction<genreList>>
+  isDropdownModal: boolean
+  setIsDropdownModal: Dispatch<SetStateAction<boolean>>
+  animationMove: animationType
+  setAnimationMove: Dispatch<SetStateAction<animationType>>
+  userProfile: userProfiletype
+  setUserProfile: Dispatch<SetStateAction<userProfiletype>>
+  toastPopup: toastType
+  setToastPopup: Dispatch<SetStateAction<toastType>>
+  isToastPopup: boolean
+  setIsToastPopup: Dispatch<SetStateAction<boolean>>
+  headerScroll: number
+  setHeaderScroll: Dispatch<SetStateAction<number>>
+  getUser: getUserType | null
+  setGetUser: Dispatch<SetStateAction<getUserType | null>>
+  putImageUrl: string
+  setPutImageUrl: Dispatch<SetStateAction<string>>
+  getImageUrl: string
+  setGetImageUrl: Dispatch<SetStateAction<string>>
+  initBright: number
+  setInitBright: Dispatch<SetStateAction<number>>
+}
 
 type genreList = {
-  id?: number;
-  index: number;
-  value: string;
-  title: string;
-}[];
+  id?: number
+  index: number
+  value: string
+  title: string
+}[]
 
-export const AppContext = createContext<appType | null>(null);
+export const AppContext = createContext<appType | null>(null)
 
 export default function AppStore({ children }: any): JSX.Element {
-  const [pickGender, setPickGender] = useState<string>('Female');
+  const [pickGender, setPickGender] = useState<string>('Female')
 
   // header ctrl
-  const [headerName, setHeaderName] = useState<string>('');
+  const [headerName, setHeaderName] = useState<string>('')
 
   // upload cover genre
-  const [userPickGenre, setUserPickGenre] = useState<genreList>([]);
-  const [uploadGenre, setUploadGenre] = useState([]);
+  const [userPickGenre, setUserPickGenre] = useState<genreList>([])
+  const [uploadGenre, setUploadGenre] = useState([])
 
-  const [thirdPickGenre, setThirdPickGenre] = useState<never[]>([]);
-  const [oneMorePickGenre, setOneMorePickGenre] = useState<never[]>([]);
+  const [thirdPickGenre, setThirdPickGenre] = useState<never[]>([])
+  const [oneMorePickGenre, setOneMorePickGenre] = useState<genreList>([])
 
   // dropdown popup ctrl
-  const [isDropdownModal, setIsDropdownModal] = useState(false);
+  const [isDropdownModal, setIsDropdownModal] = useState(false)
 
   // get iamge url
-  const [putImageUrl, setPutImageUrl] = useState('');
-  const [getImageUrl, setGetImageUrl] = useState('');
+  const [putImageUrl, setPutImageUrl] = useState('')
+  const [getImageUrl, setGetImageUrl] = useState('')
 
   // toast popup ctrl
   const [toastPopup, setToastPopup] = useState({
@@ -111,8 +106,8 @@ export default function AppStore({ children }: any): JSX.Element {
     modalType: '',
     data: [{ index: 0, desc: '', value: '' }],
     onPress: () => console.log(''),
-  });
-  const [isToastPopup, setIsToastPopup] = useState(false);
+  })
+  const [isToastPopup, setIsToastPopup] = useState(false)
 
   // animation toast
   const [animationMove, setAnimationMove] = useState({
@@ -120,7 +115,7 @@ export default function AppStore({ children }: any): JSX.Element {
     bool: false,
     type: '',
     loading: false,
-  });
+  })
 
   // user profile
   const [userProfile, setUserProfile] = useState({
@@ -134,15 +129,15 @@ export default function AppStore({ children }: any): JSX.Element {
     intro: '',
     regdate: new Date(),
     user_interest: [],
-  });
+  })
 
-  const [getUser, setGetUser] = useState<getUserType | null>(null);
+  const [getUser, setGetUser] = useState<getUserType | null>(null)
 
   // scroll ctrl
-  const [headerScroll, setHeaderScroll] = useState(0);
+  const [headerScroll, setHeaderScroll] = useState(0)
 
   // init bright
-  const [initBright, setInitBright] = useState(0);
+  const [initBright, setInitBright] = useState(0)
 
   const genreMaleArr = [
     { index: 0, value: 'TraditionalFantasy', title: '정통 판타지' },
@@ -163,7 +158,7 @@ export default function AppStore({ children }: any): JSX.Element {
     { index: 15, value: 'Military', title: '밀리터리' },
     { index: 16, value: 'Fanfic', title: '팬픽' },
     { index: 17, value: 'ETC', title: '기타' },
-  ];
+  ]
 
   const genreFemaleArr = [
     { index: 18, value: 'RomanceFantasy', title: '로맨스 판타지' },
@@ -172,7 +167,7 @@ export default function AppStore({ children }: any): JSX.Element {
     { index: 21, value: 'HistoricalRomance', title: '사극 로맨스' },
     { index: 22, value: 'BL', title: 'BL' },
     { index: 23, value: 'GL', title: 'GL' },
-  ];
+  ]
 
   return (
     <AppContext.Provider
@@ -224,5 +219,5 @@ export default function AppStore({ children }: any): JSX.Element {
       }}>
       {children}
     </AppContext.Provider>
-  );
+  )
 }
