@@ -14,7 +14,11 @@ export type paramsType = {
   value?: string | []
 }
 
-export async function asyncStorageUtil({ method, key, value }: paramsType) {
+export async function asyncStorageUtil({
+  method,
+  key,
+  value,
+}: paramsType): Promise<any> {
   switch (method) {
     case MethodEnum.SET:
       if (!key || Array.isArray(key)) return
@@ -23,7 +27,7 @@ export async function asyncStorageUtil({ method, key, value }: paramsType) {
     case MethodEnum.GET:
       if (!key || Array.isArray(key)) return
       return await AsyncStorage.getItem(key, (err, result) => {
-        if (!result) return
+        if (!result) return ''
         if (err) console.error(`Error!: ${err}`)
         return { result }
       })

@@ -1,23 +1,23 @@
 import React from 'react'
 import styled from 'styled-components/native'
 
-// image
-import splashScreen from '@Images/splash_screen.png'
-
 export default function SplashScreen() {
   return (
     <Layout>
-      <SplashImage source={splashScreen} />
+      <SplashImage source={require('@Images/splash_screen.png')} />
     </Layout>
   )
 }
 
 const Layout = styled.View`
   flex: 1;
+  justify-content: center;
+  align-items: center;
   background-color: ${({ theme }) => theme.color.black0};
 `
 
 const SplashImage = styled.Image`
-  width: 100%;
-  height: auto;
+  width: 300px;
+  height: 100%;
+  resize: contain;
 `

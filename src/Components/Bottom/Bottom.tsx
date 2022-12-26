@@ -44,6 +44,7 @@ export function Bottom({ state, navigation }: any): JSX.Element {
     setPutImageUrl,
     setGetImageUrl,
   } = useAppContext()
+
   const { setUserToken } = useContext(AuthContext)
   const { asyncDispatch } = useAsyncContext()
 

@@ -11,6 +11,7 @@ import Logo from '@Icons/logo.svg'
 // components
 import ToastPush from '../Interaction/ToastPush'
 import { Platform } from 'react-native'
+import Header from '../Header/HeaderComponent'
 
 export function AuthMain({ navigation }: any): JSX.Element {
   const goDivide = (type: string): void => {
@@ -82,11 +83,6 @@ const LogoWrap = styled.View`
   display: flex;
   justify-content: center;
   flex: 6;
-`
-
-const MainLogoInner = styled.View`
-  width: 100%;
-  height: 100%;
 `
 
 const InteractionWrap = styled.View`

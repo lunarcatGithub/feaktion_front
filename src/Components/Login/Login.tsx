@@ -15,6 +15,7 @@ import useAsyncStorage from '@Hooks/useAsyncStorage'
 // types
 import { loginType } from 'authTypeModule'
 import { loginAgent } from '~/Agent/AuthAent'
+import Header from '../Header/HeaderComponent'
 
 export default function Login({ navigation }: any): JSX.Element {
   const { loginInput, setLoginInput } = useAuthMainContext()
@@ -156,14 +157,22 @@ export default function Login({ navigation }: any): JSX.Element {
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <Layout>
-        {inputLayoutArea()}
-        <SocialLayout />
-        <DoSignUpTitleWrap>
-          <Title>아직 계정이 없으신가요? </Title>
-          <SignUpButton onPress={() => signupHandler()}>
-            <ButtonTitle>회원가입</ButtonTitle>
-          </SignUpButton>
-        </DoSignUpTitleWrap>
+        <Header
+          navigation={navigation}
+          name="DoLogin"
+          title="로그인하기"
+          onPress={() => {}}
+        />
+        <LayoutInner>
+          {inputLayoutArea()}
+          <SocialLayout />
+          <DoSignUpTitleWrap>
+            <Title>아직 계정이 없으신가요? </Title>
+            <SignUpButton onPress={() => signupHandler()}>
+              <ButtonTitle>회원가입</ButtonTitle>
+            </SignUpButton>
+          </DoSignUpTitleWrap>
+        </LayoutInner>
       </Layout>
     </TouchableWithoutFeedback>
   )
@@ -173,6 +182,10 @@ const Layout = styled.View`
   display: flex;
   flex: 1;
   background: ${({ theme }) => theme.color.gray12};
+`
+
+const LayoutInner = styled.View`
+  display: flex;
   padding: 0 16px;
   flex-direction: column;
   justify-content: space-between;

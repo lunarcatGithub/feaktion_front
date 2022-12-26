@@ -50,10 +50,7 @@ const Gradient = styled(LinearGradient)<{ style: ImageStyle; size: number }>`
   z-index: 999;
 `
 
-const PageItem = styled.Image<{
-  source: ImageSourcePropType
-  style: ImageStyle
-}>`
+const PageItem = styled.Image`
   width: ${({ style }) => style}px;
   height: 100%;
 `
