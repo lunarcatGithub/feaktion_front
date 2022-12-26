@@ -36,7 +36,6 @@ import { RouterMoveType } from '@Router/types/RouterType'
 import { ScrollDirectionType } from '../types/LayoutType'
 import { OnScrollEvent } from '../types/CommonType'
 import { uploadType } from '~/Store/UploadStore'
-import useMutationHook from '~/Hooks/useMutationHook'
 
 type MainDataType = {
   recent: {}
@@ -83,8 +82,6 @@ export default function Main({
     { retry: true }
   )
 
-  const { data: recentGetData, mutateAsync } = useMutationHook('get')
-
   const queryClient = useQueryClient()
   const { setUserToken } = useContext(AuthContext)
 
@@ -126,7 +123,7 @@ export default function Main({
   const [headerOpacity] = useState(new Animated.Value(0))
 
   // hooks
-  const [asyncHandler, _result] = useAsyncStorage()
+  // const [asyncHandler, _result] = useAsyncStorage()
 
   // popup
   const [isModal, setIsModal] = useState(false)
@@ -300,8 +297,7 @@ export default function Main({
     if ([400, 403, 404, 500, 502].includes(mainGetData?.status)) {
       // login 화면으로 이동
       asyncDispatch({ type: AsyncCallType.REMOVE, key: 'token' })
-      console.log('>>>>>>>>>>>>>>>>>> check')
-      setUserToken(false)
+      // setUserToken('')
       return
     }
   }, [mainGetData])
@@ -322,8 +318,7 @@ export default function Main({
 
   useEffect(() => {
     /** dev 임시 로그아웃 */
-    // setUserToken(false);
-    // asyncHandler('SET', 'token', JSON.stringify(false));
+    // setUserToken('')
 
     // 가입하자마자 장르 선택할 수 있게 하기
     // 장르가 선택되어 있다면 출력안함
@@ -347,14 +342,13 @@ export default function Main({
   }
 
   useEffect(() => {
-    return
-    mutateAsync({
-      url: `/feaktion/novels`,
-      params: {
-        take: 6,
-        // feaktion_id: viewFeaktionData[viewFeaktionData.length - 1].feaktion_id,
-      },
-    })
+    // mutateAsync({
+    //   url: `/feaktion/novels`,
+    //   params: {
+    //     take: 6,
+    //     // feaktion_id: viewFeaktionData[viewFeaktionData.length - 1].feaktion_id,
+    //   },
+    // })
   }, [])
 
   /** fiction data render */

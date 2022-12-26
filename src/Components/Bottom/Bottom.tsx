@@ -77,7 +77,7 @@ export function Bottom({ state, navigation }: any): JSX.Element {
     // 초기 장르 네비게이션 용
     // 향후 전역으로 유저 메일 포함해서 뿌려주기
     if (!userData?.data) {
-      asyncDispatch({ type: AsyncCallType.REMOVE, key: 'token' })
+      // asyncDispatch({ type: AsyncCallType.REMOVE, key: 'token' })
       // setUserToken(false)
       return
     }

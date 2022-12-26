@@ -45,6 +45,7 @@ const HOCRouter = (): JSX.Element => {
       method: MethodEnum.GET,
       key: 'token',
     })
+    console.log('get resultToken', resultToken)
     if (resultToken === null) {
       setUserToken('')
       setIsLoading(false)
@@ -101,39 +102,30 @@ const HOCRouter = (): JSX.Element => {
       ))}
     </HOCStack.Navigator>
   )
-
+  console.log('userToken', userToken)
   const authDivideScreen = (): JSX.Element => {
     // 루트 진입할 때 스플래시 이미지 보여주기
     if (isLoading) return <SplashImageScreen />
+    // 메인 or login화면 진입 (토큰 가지고 있는지 여부)
     return (
       <RootStack.Navigator>
-        <RootStack.Screen
-          name="Auth"
-          component={AuthStackRouter}
-          options={{ headerShown: false }}
-        />
+        {userToken !== '' && (
+          <RootStack.Screen
+            name="Main"
+            component={HOCScreen}
+            options={{ headerShown: false }}
+          />
+        )}
+
+        {userToken === '' && (
+          <RootStack.Screen
+            name="Auth"
+            component={AuthStackRouter}
+            options={{ headerShown: false }}
+          />
+        )}
       </RootStack.Navigator>
     )
-    // 메인 or login화면 진입 (토큰 가지고 있는지 여부)
-    // return (
-    //   <RootStack.Navigator>
-    //     {userToken !== '' && (
-    //       <RootStack.Screen
-    //         name="Main"
-    //         component={HOCScreen}
-    //         options={{ headerShown: false }}
-    //       />
-    //     )}
-
-    //     {userToken === '' && (
-    //       <RootStack.Screen
-    //         name="Auth"
-    //         component={AuthStackRouter}
-    //         options={{ headerShown: false }}
-    //       />
-    //     )}
-    //   </RootStack.Navigator>
-    // )
   }
 
   useEffect(() => {

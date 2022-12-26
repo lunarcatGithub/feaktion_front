@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import styled from 'styled-components/native'
 import { Keyboard, TouchableWithoutFeedback } from 'react-native'
 
@@ -10,16 +10,16 @@ import { InputText } from '../Input'
 // hooks
 import { MethodMytateEnum, useMutationHook } from '~/Hooks/useMutationHook'
 import { useAuthMainContext } from '~/Hooks/useContextHook'
-import useAsyncStorage from '@Hooks/useAsyncStorage'
 
 // types
 import { loginType } from 'authTypeModule'
 import { loginAgent } from '~/Agent/AuthAent'
 import Header from '../Header/HeaderComponent'
+import { AuthContext } from '~/App'
 
 export default function Login({ navigation }: any): JSX.Element {
   const { loginInput, setLoginInput } = useAuthMainContext()
-  const [asyncStorageHandler, _result] = useAsyncStorage()
+  const { setUserToken } = useContext(AuthContext)
 
   // button active
   const [buttonActive, setButtonActive] = useState<boolean>(false)
@@ -68,8 +68,12 @@ export default function Login({ navigation }: any): JSX.Element {
       password,
       mutate: loginMutate,
     })
-    if (loginFetchResult.type === '') {
+
+    if (!loginFetchResult?.type) {
+      console.log('loginFetchResult?.type', loginFetchResult?.type)
       // asyncStorageHandler("SET", "token", )
+      setUserToken(loginFetchResult)
+      return
     }
     setAlertText(loginFetchResult)
     return

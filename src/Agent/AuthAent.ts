@@ -16,7 +16,6 @@ export type signupType = {
 }
 
 export const loginAgent = async ({ userId, password, mutate }: loginType) => {
-  const boolValue = JSON.stringify(true)
   const userIdValue = JSON.stringify({ id: userId })
 
   const loginResult = await mutate?.mutateAsync({
@@ -24,7 +23,6 @@ export const loginAgent = async ({ userId, password, mutate }: loginType) => {
     data: { email: userId, password },
   })
 
-  console.log('loginResult  ', loginResult)
   const statusResult = loginResult.status
   const typeAndText = {
     type: '',
@@ -43,7 +41,7 @@ export const loginAgent = async ({ userId, password, mutate }: loginType) => {
         key: 'profile',
         value: userIdValue,
       })
-      break
+      return loginResult.data.token
     case 400 || 401:
       typeAndText.type = 'userId'
       typeAndText.text = '로그인 입력 정보를 다시 확인해 주세요'
