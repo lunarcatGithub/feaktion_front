@@ -14,6 +14,7 @@ import InputBundle from '../Common/InputBundle'
 import { MethodMytateEnum, useMutationHook } from '~/Hooks/useMutationHook'
 import usePasswordValidityCheck from '~/Hooks/usePasswordValidityCheck'
 import { signupValidateChecktAgent } from '~/Agent/AuthAent'
+import Header from '../Header/HeaderComponent'
 
 export function SignUpFirst({ navigation }: any): JSX.Element {
   // store
@@ -129,24 +130,34 @@ export function SignUpFirst({ navigation }: any): JSX.Element {
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <Layout>
-        <SignUptWrap>
-          <InputBundle
-            data={InputArr}
-            onChangeText={textMergeHandler}
-            buttonActive={buttonActive}
-            buttonText={'다음단계'}
-            buttonOnPress={nextButtonHandler}
-          />
-        </SignUptWrap>
+        <Header
+          navigation={navigation}
+          name="SignUp"
+          title="회원가입"
+          onPress={() => {}}
+        />
+        <LayoutInner>
+          <SignUptWrap>
+            <InputBundle
+              data={InputArr}
+              onChangeText={textMergeHandler}
+              buttonActive={buttonActive}
+              buttonText={'다음단계'}
+              buttonOnPress={nextButtonHandler}
+            />
+          </SignUptWrap>
+        </LayoutInner>
       </Layout>
     </TouchableWithoutFeedback>
   )
 }
 
 const Layout = styled.View`
-  display: flex;
   flex: 1;
   background: ${({ theme }) => theme.color.gray12};
+`
+
+const LayoutInner = styled.View`
   padding: 16px;
 `
 

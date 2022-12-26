@@ -15,6 +15,7 @@ import { useAppContext, useAuthMainContext } from '~/Hooks/useContextHook'
 import { loginType } from 'authTypeModule'
 import { signupAgent, signupType } from '~/Agent/AuthAent'
 import { MethodMytateEnum, useMutationHook } from '~/Hooks/useMutationHook'
+import Header from '../Header/HeaderComponent'
 
 export default function SignUpSecond({ navigation }: any): JSX.Element {
   // store
@@ -194,76 +195,96 @@ export default function SignUpSecond({ navigation }: any): JSX.Element {
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <Layout>
-        <SignUpSecondWrap>
-          {InputArr?.map(
-            (
-              { type, secure, placeholder, removeBtn, maxLength, value, alert },
-              i
-            ) => (
-              <InputLayout key={i}>
-                <InputText
-                  secure={secure}
-                  placeholder={placeholder}
-                  removeBtn={removeBtn}
-                  maxLength={maxLength}
-                  onChangeText={text => textMergeHandler(type, text)}
-                  value={value}
-                  onPress={() => console.log('')}
-                />
-                {alert.type === type && alert.text ? (
-                  <AlertText>{alert.text}</AlertText>
-                ) : null}
-              </InputLayout>
-            )
-          )}
-          {/* <SignUpSecondInput alertType='' /> */}
-        </SignUpSecondWrap>
-        <GenderWrap>
-          <GenderText>성별</GenderText>
-          <MiddleToggleButtonWrap>
-            <MiddleToggleButton
-              buttonText1="여성"
-              buttonText2="남성"
-              onPress={GenreDataSendHandler}
-            />
-          </MiddleToggleButtonWrap>
-        </GenderWrap>
-        <AllCheckBoxWrap>
-          {checkBoxArr?.map(({ type, toggle, checkText, divide, alert }, i) => (
-            <CheckBoxLayout key={i}>
-              <CheckBoxWrap>
-                <CheckBox
-                  onPress={toggleAgreeHandler}
-                  type={type}
-                  toggle={toggle}
-                />
-                <Button onPress={() => naviHandler(type)}>
-                  <CheckBoxText>{checkText}</CheckBoxText>
-                </Button>
-              </CheckBoxWrap>
-              {divide ? <DivideLine /> : null}
-              {alert?.type === 'agree' && alert.text ? (
-                <AlertText>{alert.text}</AlertText>
-              ) : null}
-            </CheckBoxLayout>
-          ))}
-          <ButtonWrap>
-            <LargeButton
-              active={buttonActive}
-              buttonText={'회원가입'}
-              onPress={() => signUpButtonHandler()}
-            />
-          </ButtonWrap>
-        </AllCheckBoxWrap>
+        <Header
+          navigation={navigation}
+          name="SignUpSecond"
+          title="프로필 입력하기"
+          onPress={() => {}}
+        />
+        <LayoutInner>
+          <SignUpSecondWrap>
+            {InputArr?.map(
+              (
+                {
+                  type,
+                  secure,
+                  placeholder,
+                  removeBtn,
+                  maxLength,
+                  value,
+                  alert,
+                },
+                i
+              ) => (
+                <InputLayout key={i}>
+                  <InputText
+                    secure={secure}
+                    placeholder={placeholder}
+                    removeBtn={removeBtn}
+                    maxLength={maxLength}
+                    onChangeText={text => textMergeHandler(type, text)}
+                    value={value}
+                    onPress={() => console.log('')}
+                  />
+                  {alert.type === type && alert.text ? (
+                    <AlertText>{alert.text}</AlertText>
+                  ) : null}
+                </InputLayout>
+              )
+            )}
+            {/* <SignUpSecondInput alertType='' /> */}
+          </SignUpSecondWrap>
+          <GenderWrap>
+            <GenderText>성별</GenderText>
+            <MiddleToggleButtonWrap>
+              <MiddleToggleButton
+                buttonText1="여성"
+                buttonText2="남성"
+                onPress={GenreDataSendHandler}
+              />
+            </MiddleToggleButtonWrap>
+          </GenderWrap>
+          <AllCheckBoxWrap>
+            {checkBoxArr?.map(
+              ({ type, toggle, checkText, divide, alert }, i) => (
+                <CheckBoxLayout key={i}>
+                  <CheckBoxWrap>
+                    <CheckBox
+                      onPress={toggleAgreeHandler}
+                      type={type}
+                      toggle={toggle}
+                    />
+                    <Button onPress={() => naviHandler(type)}>
+                      <CheckBoxText>{checkText}</CheckBoxText>
+                    </Button>
+                  </CheckBoxWrap>
+                  {divide ? <DivideLine /> : null}
+                  {alert?.type === 'agree' && alert.text ? (
+                    <AlertText>{alert.text}</AlertText>
+                  ) : null}
+                </CheckBoxLayout>
+              )
+            )}
+            <ButtonWrap>
+              <LargeButton
+                active={buttonActive}
+                buttonText={'회원가입'}
+                onPress={() => signUpButtonHandler()}
+              />
+            </ButtonWrap>
+          </AllCheckBoxWrap>
+        </LayoutInner>
       </Layout>
     </TouchableWithoutFeedback>
   )
 }
 
 const Layout = styled.View`
-  display: flex;
   flex: 1;
   background: ${({ theme }) => theme.color.gray12};
+`
+
+const LayoutInner = styled.View`
   padding: 16px;
 `
 
