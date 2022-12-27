@@ -20,7 +20,12 @@ import UserBoardScreen from '@Screens/UserBoard/UserBoardScreen'
 import { Bottom } from '@Components/Bottom/Bottom'
 import SplashImageScreen from '@Components/SplashScreen'
 import { NavigationContainer } from '@react-navigation/native'
+
+// store
 import { AuthContext } from '~/App'
+
+// hooks
+import { getUserAgent } from '~/Agent/UserAgent'
 
 // context or Reducer
 const HOCStack = createNativeStackNavigator()
@@ -32,20 +37,22 @@ const HOCRouter = (): JSX.Element => {
   const [isLoading, setIsLoading] = useState(false)
   /**
    * HOC에 접근하기 전 로딩 스플래시 화면
-   * user token이 있는지 먼저 요청
+   * user 데이터가 정상인지 먼저 요청 (서버에서 토큰 여부 결정하기 때문)
    */
-  // const userData = useQuery(
-  //   ['myProfile'],
-  //   () => useFetch({ url: `/user`, method: 'get' }),
-  //   { retry: true, enabled: userToken !== '' && userToken !== null }
-  // )
+
+  // const userGetData = getUserAgent({
+  //   key: ['myProfile'],
+  //   url: `/user`,
+  //   option: { retry: false },
+  // })
+  // console.log('userGetData', userGetData)
   const loadingPointHandler = async () => {
     setIsLoading(true)
     const resultToken = await asyncStorageUtil({
       method: MethodEnum.GET,
       key: 'token',
     })
-    console.log('get resultToken', resultToken)
+
     if (resultToken === null) {
       setUserToken('')
       setIsLoading(false)
@@ -102,7 +109,7 @@ const HOCRouter = (): JSX.Element => {
       ))}
     </HOCStack.Navigator>
   )
-  console.log('userToken', userToken)
+
   const authDivideScreen = (): JSX.Element => {
     // 루트 진입할 때 스플래시 이미지 보여주기
     if (isLoading) return <SplashImageScreen />

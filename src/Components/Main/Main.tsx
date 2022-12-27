@@ -20,7 +20,6 @@ import { AuthContext } from '~/App'
 
 // hooks
 import { useAppContext, useAsyncContext } from '~/Hooks/useContextHook'
-import useAsyncStorage from '~/Hooks/useAsyncStorage'
 import useBackExit from '~/Hooks/useBackExit'
 
 // data
@@ -36,13 +35,8 @@ import { RouterMoveType } from '@Router/types/RouterType'
 import { ScrollDirectionType } from '../types/LayoutType'
 import { OnScrollEvent } from '../types/CommonType'
 import { uploadType } from '~/Store/UploadStore'
-
-type MainDataType = {
-  recent: {}
-  interest_genres: {}
-  novels: {}
-  shorts: {}
-} | null
+import getAgent from '~/Agent/GetAgent'
+import { getNovelsAgent, MainDataType } from '~/Agent/MainAgent'
 
 type ScrollDataType = {
   id: number
@@ -73,20 +67,22 @@ export default function Main({
   const { HORIZON, LIST, VERTICAL } = ScrollDirectionType
 
   // ref
+  const retryRef = useRef<boolean>()
   const scrollRef = useRef(null)
 
   // fetch
-  const { data: mainGetData }: { data: any } = useQuery(
-    ['fiction'],
-    () => useFetch({ url: `/feaktion`, method: 'get' }),
-    { retry: true }
-  )
-
-  const queryClient = useQueryClient()
-  const { setUserToken } = useContext(AuthContext)
+  const mainGetData = getNovelsAgent({
+    key: ['fiction'],
+    url: `/feaktion`,
+    option: { retry: true },
+  })
+  // const mainGetData = useQuery(
+  //   ["fiction"],
+  //   () => useFetch({ url: '/feaktion', method: 'get' }),
+  //   { retry: true }
+  // )
 
   // context
-  const { asyncDispatch } = useAsyncContext()
   const {
     genreMaleArr,
     genreFemaleArr,
@@ -175,18 +171,18 @@ export default function Main({
     }
   }
 
-  const mergeGenreArr = () => {
-    genreMaleArr.sort(() => Math.random() - Math.random())
-    genreFemaleArr.sort(() => Math.random() - Math.random())
+  // const mergeGenreArr = () => {
+  //   genreMaleArr.sort(() => Math.random() - Math.random())
+  //   genreFemaleArr.sort(() => Math.random() - Math.random())
 
-    let mergeArr
-    if (userGenderType === GenreType.Male) {
-      mergeArr = [...genreMaleArr, ...genreFemaleArr]
-    } else if (userGenderType === GenreType.FeMale) {
-      mergeArr = [...genreFemaleArr, ...genreMaleArr]
-    }
-    setMergeGenre(mergeArr)
-  }
+  //   let mergeArr
+  //   if (userGenderType === GenreType.Male) {
+  //     mergeArr = [...genreMaleArr, ...genreFemaleArr]
+  //   } else if (userGenderType === GenreType.FeMale) {
+  //     mergeArr = [...genreFemaleArr, ...genreMaleArr]
+  //   }
+  //   setMergeGenre(mergeArr)
+  // }
 
   useEffect(() => {
     // default select genre
@@ -202,11 +198,11 @@ export default function Main({
   //           select={{ selectGenre, setSelectGenre }}
   //         />
   //       </TagsScrollWrap>
-  //     );
+  //     )
   //   } else {
-  //     return <DummyLayout />;
+  //     return <DummyLayout />
   //   }
-  // };
+  // }
 
   const modalMoveCtrl = (type: string) => {
     setIsModal(false)
@@ -290,17 +286,11 @@ export default function Main({
   }
 
   useEffect(() => {
-    if ([200, 201].includes(mainGetData?.status)) {
-      setMainData(mainGetData?.data?.data)
+    if (mainGetData?.data !== undefined) {
+      setMainData(mainGetData?.data)
       return
     }
-    if ([400, 403, 404, 500, 502].includes(mainGetData?.status)) {
-      // login 화면으로 이동
-      asyncDispatch({ type: AsyncCallType.REMOVE, key: 'token' })
-      // setUserToken('')
-      return
-    }
-  }, [mainGetData])
+  }, [mainGetData?.data])
 
   useEffect(() => {
     const back = BackHandler.addEventListener(
@@ -310,6 +300,7 @@ export default function Main({
     return () => back.remove()
   }, [])
 
+  // 뒤로가기 할 때 앱 종료
   const hookBackHandle = () => {
     if (navigation?.canGoBack()) return
     backHandler()
@@ -322,8 +313,8 @@ export default function Main({
 
     // 가입하자마자 장르 선택할 수 있게 하기
     // 장르가 선택되어 있다면 출력안함
+    return
     if (!getUser) return
-    console.log('getUser?.user_interest', getUser?.user_interest)
 
     if (getUser?.user_interest?.length === 0) {
       navigation.navigate(SIDESTACK, {
@@ -360,7 +351,7 @@ export default function Main({
         <ScrollAllWrap>
           <TitleHeader title={title} onPress={() => navigationHandler(navi)} />
           {/* {isTagsScrollHandler(isTags)} */}
-          {scrollType === HORIZON ? (
+          {scrollType === HORIZON && (
             <ScrollLayout styling={isTags}>
               <HorizonScroll
                 items={data}
@@ -368,7 +359,8 @@ export default function Main({
                 onPress={pageNavigationHandler}
               />
             </ScrollLayout>
-          ) : scrollType === VERTICAL ? (
+          )}
+          {scrollType === VERTICAL && (
             <VerticalLayout>
               <VerticalScroll
                 items={data}
@@ -380,27 +372,23 @@ export default function Main({
                 onEndReached={() => infinityDataHandler(navi)}
               />
             </VerticalLayout>
-          ) : (
-            <ShortWrap>
-              {data?.map(
-                (data: ListFictionType, i: number): JSX.Element => (
-                  <LayoutInner key={`index__${i}`}>
-                    <ShortContent
-                      items={data}
-                      onPress={pageNavigationHandler}
-                    />
-                  </LayoutInner>
-                )
-              )}
-            </ShortWrap>
           )}
+          <ShortWrap>
+            {data?.map(
+              (data: ListFictionType, i: number): JSX.Element => (
+                <LayoutInner key={`index__${i}`}>
+                  <ShortContent items={data} onPress={pageNavigationHandler} />
+                </LayoutInner>
+              )
+            )}
+          </ShortWrap>
         </ScrollAllWrap>
       </LayoutInner>
     )
   }
 
   useEffect(() => {
-    mergeGenreArr()
+    // mergeGenreArr()
   }, [])
 
   const scrollList = [
@@ -439,7 +427,7 @@ export default function Main({
   ]
 
   const RefreshControl = () => {
-    queryClient.invalidateQueries(['fiction'])
+    mainGetData?.refetch()
   }
 
   // mutateAsync({
