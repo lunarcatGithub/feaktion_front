@@ -26,6 +26,10 @@ import { AuthContext } from '~/App'
 
 // hooks
 import { getUserAgent } from '~/Agent/UserAgent'
+import { useQuery } from 'react-query'
+import useFetch from '~/Hooks/useAxiosFetch'
+import { useAppContext } from '~/Hooks/useContextHook'
+import { Genre } from '~/Components/Common/Genre'
 
 // context or Reducer
 const HOCStack = createNativeStackNavigator()
@@ -34,30 +38,38 @@ const BottomTabs = createBottomTabNavigator()
 
 const HOCRouter = (): JSX.Element => {
   const { userToken, setUserToken } = useContext(AuthContext)
+  const { setGetUser } = useAppContext()
   const [isLoading, setIsLoading] = useState(false)
   /**
    * HOC에 접근하기 전 로딩 스플래시 화면
    * user 데이터가 정상인지 먼저 요청 (서버에서 토큰 여부 결정하기 때문)
    */
 
-  // const userGetData = getUserAgent({
-  //   key: ['myProfile'],
-  //   url: `/user`,
-  //   option: { retry: false },
-  // })
-  // console.log('userGetData', userGetData)
+  const userGetData = getUserAgent({
+    key: ['myProfile'],
+    url: `/user`,
+    option: { retry: true },
+  })
+
   const loadingPointHandler = async () => {
     setIsLoading(true)
     const resultToken = await asyncStorageUtil({
       method: MethodEnum.GET,
       key: 'token',
     })
+    if (!userGetData || userGetData?.isAuth === false) {
+      setUserToken('')
+      setIsLoading(false)
+      return
+    }
 
     if (resultToken === null) {
       setUserToken('')
       setIsLoading(false)
       return
     }
+
+    setGetUser(userGetData?.data)
     setUserToken(resultToken)
     setIsLoading(false)
   }
@@ -79,8 +91,9 @@ const HOCRouter = (): JSX.Element => {
   /**
    * 하단 탭 NAV 관리
    */
+  const isFirstSignin = userGetData?.data?.user_interest <= 0
   const TabsBottomList = [
-    { key: 0, name: 'Main', component: MainRouter },
+    { key: 0, name: 'Main', component: () => MainRouter(isFirstSignin) },
     { key: 1, name: 'MyFictionList', component: FictionListStackRouter },
     // { key: 2, name: 'Upload', component: DummyStackScreen },
     { key: 3, name: 'Store', component: ArchiveTopTabRouter },
@@ -109,10 +122,14 @@ const HOCRouter = (): JSX.Element => {
       ))}
     </HOCStack.Navigator>
   )
-
   const authDivideScreen = (): JSX.Element => {
     // 루트 진입할 때 스플래시 이미지 보여주기
     if (isLoading) return <SplashImageScreen />
+
+    // 첫 로그인 or 장르 선택되어 있지 않을 때
+    // if (userGetData?.isAuth === true && userGetData?.data.user_interest <= 0) {
+    //   return <Genre navigation={navigation} route={route} />
+    // }
     // 메인 or login화면 진입 (토큰 가지고 있는지 여부)
     return (
       <RootStack.Navigator>
@@ -137,7 +154,7 @@ const HOCRouter = (): JSX.Element => {
 
   useEffect(() => {
     loadingPointHandler()
-  }, [])
+  }, [userGetData?.isAuth])
 
   return <NavigationContainer>{authDivideScreen()}</NavigationContainer>
 }

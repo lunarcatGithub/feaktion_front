@@ -1,27 +1,27 @@
-import { RouteProp } from '@react-navigation/native';
-import { StackNavigationProp } from '@react-navigation/stack';
-import { uploadType } from '~/Store/UploadStore';
-import { NavigationScreenType } from './NavigationType';
+import { RouteProp } from '@react-navigation/native'
+import { NativeStackNavigationProp } from '@react-navigation/native-stack'
+import { uploadType } from '~/Store/UploadStore'
+import { NavigationScreenType } from './NavigationType'
 
 type MainStackParamList = {
-  SideBottomStack: { screen: string; params?: { type: string } };
+  SideBottomStack: { screen: string; params?: { type: string } }
   SideStack: {
-    screen: string;
+    screen: string
     params: {
-      type?: string;
-      userId?: number;
-      navi?: 'Auth';
-      selected?: null;
-      currentType?: uploadType;
-      fictionId?: number;
-    };
-  };
-  UserBoard: {};
+      type?: string
+      userId?: number
+      navi?: 'Auth'
+      selected?: null
+      currentType?: uploadType
+      fictionId?: number
+    }
+  }
+  UserBoard: {}
   // Viewer: { params: { currentType: 'Short'; fictionId: number } };
-};
+}
 
 export type MainNavigationStackProps = {
-  navigation: StackNavigationProp<
+  navigation: NativeStackNavigationProp<
     MainStackParamList,
     Exclude<
       NavigationScreenType,
@@ -31,5 +31,6 @@ export type MainNavigationStackProps = {
       | 'GenreSelect'
       | 'OtherFictionList'
     >
-  >;
-};
+  >
+  isFirstSignin: boolean
+}

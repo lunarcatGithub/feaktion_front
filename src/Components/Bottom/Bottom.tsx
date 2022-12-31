@@ -32,6 +32,9 @@ import { uploadType } from '~/Store/UploadStore'
 import { useQuery } from 'react-query'
 import useFetch from '~/Hooks/useAxiosFetch'
 import { AuthContext } from '~/App'
+import PopupBottomModal, { ValueEnum } from '../Modal/PopupBottomModal'
+
+const UPLOAD_FICTION = 'UploadFiction'
 
 export function Bottom({ state, navigation }: any): JSX.Element {
   // context
@@ -39,16 +42,13 @@ export function Bottom({ state, navigation }: any): JSX.Element {
     toastPopup,
     setToastPopup,
     isToastPopup,
+    getUser,
     setIsToastPopup,
-    setGetUser,
     setPutImageUrl,
     setGetImageUrl,
   } = useAppContext()
 
-  const { setUserToken } = useContext(AuthContext)
-  const { asyncDispatch } = useAsyncContext()
-
-  const { currentType, setCurrentType: setCurrentType } = useUploadContext()
+  const { setCurrentType } = useUploadContext()
 
   const [homeIcon, setHomeIcon] = useState<JSX.Element | null>(null)
   const [fictionListIcon, setFictionListIcon] = useState<JSX.Element | null>(
@@ -57,48 +57,34 @@ export function Bottom({ state, navigation }: any): JSX.Element {
   const [archiveIcon, setArchiveIcon] = useState<JSX.Element | null>(null)
   const [myboardIcon, setMyboardIcon] = useState<JSX.Element | null>(null)
 
+  const [popupVisible, setPopupVisible] = useState(false)
   // popup
   // const [isModal, setIsModal] = useState(false);
 
   // fetch
-  const userData = useQuery(['myProfile'], () =>
-    useFetch({ url: `/user`, method: 'get' })
-  )
-  const putUrlData = useQuery(['imageUrl'], () =>
-    useFetch({ url: `/putImage`, method: 'get' })
-  )
-  const getUrlData = useQuery(['getImageUrl'], () =>
-    useFetch({ url: `/getImage`, method: 'get' })
-  )
+  // const putUrlData = useQuery(['imageUrl'], () =>
+  //   useFetch({ url: `/putImage`, method: 'get' })
+  // )
+  // const getUrlData = useQuery(['getImageUrl'], () =>
+  //   useFetch({ url: `/getImage`, method: 'get' })
+  // )
 
-  // console.log('userData', userData?.data?.data?.data);
+  // useEffect(() => {
+  //   // image 삽입을 위한 url
+  //   setPutImageUrl(putUrlData?.data?.data?.data?.url)
+  // }, [putUrlData])
 
-  useEffect(() => {
-    // 초기 장르 네비게이션 용
-    // 향후 전역으로 유저 메일 포함해서 뿌려주기
-    if (!userData?.data) {
-      // asyncDispatch({ type: AsyncCallType.REMOVE, key: 'token' })
-      // setUserToken(false)
-      return
-    }
-    setGetUser(userData?.data?.data?.data)
-  }, [])
+  // useEffect(() => {
+  //   // 이미지를 받기 위한 url 주소 get
+  //   setGetImageUrl(getUrlData?.data?.data?.data?.url)
+  // }, [getUrlData])
 
-  useEffect(() => {
-    // image 삽입을 위한 url
-    setPutImageUrl(putUrlData?.data?.data?.data?.url)
-  }, [putUrlData])
+  // useEffect(() => {
+  //   // stack 이동마다 팝업 닫아주기
+  //   setIsToastPopup(false)
+  // }, [state])
 
-  useEffect(() => {
-    // 이미지를 받기 위한 url 주소 get
-    setGetImageUrl(getUrlData?.data?.data?.data?.url)
-  }, [getUrlData])
-
-  useEffect(() => {
-    // stack 이동마다 팝업 닫아주기
-    setIsToastPopup(false)
-  }, [state])
-
+  // 현재 위치해 있는 네비 버튼 활성화
   useEffect(() => {
     const currentLo = state?.index // 0:home, 1:FictionList, 2:Upload, 3:Store, 4:UserBoard
     setHomeIcon(
@@ -131,45 +117,61 @@ export function Bottom({ state, navigation }: any): JSX.Element {
     )
   }, [state?.index])
 
+  const bottomTabButtonNavigation = (target: string): void => {
+    navigation.navigate(target)
+  }
+
+  const uploadModalPopupHandler = () => {
+    // setToastPopup({
+    //   ...toastPopup,
+    //   type: 'UploadFiction',
+    //   modalType: 'ToastPopup',
+    //   data: newFiction,
+    // })
+    setPopupVisible(true)
+  }
+
+  const userBoardNavigationhandler = () => {
+    navigation.navigate('Bottom', {
+      screen: 'UserBoard',
+      params: {
+        userId: getUser?.data?.user_id,
+        type: 'isMe',
+      },
+    })
+  }
+
   const bottomList = [
-    { id: 0, title: '홈', icon: homeIcon, target: 'Main' },
-    { id: 1, title: '내 작품', icon: fictionListIcon, target: 'MyFictionList' },
     {
-      id: 2,
+      title: '홈',
+      icon: homeIcon,
+      button: () => bottomTabButtonNavigation('Main'),
+    },
+    {
+      title: '내 작품',
+      icon: fictionListIcon,
+      button: () => bottomTabButtonNavigation('MyFictionList'),
+    },
+    {
       title: '',
       icon: (
         <UploadWrap>
           <Upload width={24} height={24} />
         </UploadWrap>
       ),
-      target: 'Upload',
+      button: uploadModalPopupHandler,
     },
-    { id: 3, title: '보관함', icon: archiveIcon, target: 'Store' },
-    { id: 4, title: '마이', icon: myboardIcon, target: 'UserBoard' },
+    {
+      title: '보관함',
+      icon: archiveIcon,
+      button: () => bottomTabButtonNavigation('Store'),
+    },
+    {
+      title: '마이',
+      icon: myboardIcon,
+      button: () => userBoardNavigationhandler(),
+    },
   ]
-
-  const naviHandler = (target: string): void => {
-    // bottom tab ctrl
-    if (target === 'Upload') {
-      setToastPopup({
-        ...toastPopup,
-        type: 'UploadFiction',
-        modalType: 'ToastPopup',
-        data: newFiction,
-      })
-      setIsToastPopup(true)
-    } else if (target === 'UserBoard') {
-      navigation.navigate('Bottom', {
-        screen: 'UserBoard',
-        params: {
-          userId: userData?.data?.data?.data?.user_id,
-          type: 'isMe',
-        },
-      })
-    } else {
-      navigation.navigate(target)
-    }
-  }
 
   const reportHandler = (value?: string) => {
     console.log('report', value)
@@ -219,28 +221,39 @@ export function Bottom({ state, navigation }: any): JSX.Element {
     setIsToastPopup(false)
   }, [])
 
+  const buttonHandler = ({ value, navi }: { value: string; navi: string }) => {
+    if (value === 'short') {
+      setCurrentType(uploadType.SHORT)
+    }
+    if (value === 'fiction') {
+      setCurrentType(uploadType.FICTION)
+    }
+    setPopupVisible(!popupVisible)
+    navigation.navigate(UPLOAD_FICTION, { screen: navi, params: value })
+  }
+
   return (
     <>
       <Layout>
-        {bottomList.map(({ id, title, icon, target }) => (
-          <TabButtons key={id} onPress={() => naviHandler(target)}>
+        {bottomList.map(({ title, icon, button }, id) => (
+          <TabButtons key={id.toString()} onPress={button}>
             {icon}
             {title ? <ButtonTitle>{title}</ButtonTitle> : null}
           </TabButtons>
         ))}
       </Layout>
-      <ModalPopup
-        data={toastPopup?.data}
-        visible={isToastPopup}
-        onPress={toastPopupHandler}
-        onClose={() => setIsToastPopup(false)}
-        type={toastPopup?.type}
-        modalType={toastPopup?.modalType}
+      <PopupBottomModal
+        visible={popupVisible}
+        onClose={() => setPopupVisible(false)}
+        onTrigger={buttonHandler}
       />
     </>
   )
 }
 
+/**
+ * Styled Area
+ */
 const Layout = styled.View`
   display: flex;
   flex-direction: row;

@@ -1,8 +1,8 @@
-import { RouteProp } from '@react-navigation/native';
-import { StackNavigationProp } from '@react-navigation/stack';
-import { NavigationScreenType } from './NavigationType';
-import { RouterMoveType } from '@Router/types/RouterType';
-import { FictionType } from '~/Components/types/FictionType';
+import { RouteProp } from '@react-navigation/native'
+import { NativeStackNavigationProp } from '@react-navigation/native-stack'
+import { NavigationScreenType } from './NavigationType'
+import { RouterMoveType } from '@Router/types/RouterType'
+import { FictionType } from '~/Components/types/FictionType'
 
 // type ProfileScreenRouteProp = RouteProp<
 //   RootStackParamList,
@@ -10,18 +10,18 @@ import { FictionType } from '~/Components/types/FictionType';
 // >;
 
 type SideBottomStackParamList = {
-  SideBottomStack: { screen: string; params?: { type: string } };
+  SideBottomStack: { screen: string; params?: { type: string } }
   SideStack: {
-    screen: string;
+    screen: string
     params: {
-      currentType?: FictionType;
-      fictionId?: number | string;
-      userId?: number | string;
-    };
-  };
-  UserBoard: {};
+      currentType?: FictionType
+      fictionId?: number | string
+      userId?: number | string
+    }
+  }
+  UserBoard: {}
   // Viewer: { params: { currentType: 'Short'; fictionId: number } };
-};
+}
 // SIDESTACK = 'SideStack',
 // SIDEBOTTOMSTACK = 'SideBottomStack',
 // USERBOARD = 'UserBoard',
@@ -37,7 +37,7 @@ type SideBottomStackParamList = {
 // USERLIST = 'UserList',
 // TAGLIST = 'TagList',
 export type SideBottomNavigationStackProps = {
-  navigation: StackNavigationProp<
+  navigation: NativeStackNavigationProp<
     SideBottomStackParamList,
     Exclude<
       NavigationScreenType,
@@ -47,12 +47,12 @@ export type SideBottomNavigationStackProps = {
       | 'GenreSelect'
       | 'OtherFictionList'
     >
-  >;
+  >
   route: {
     params: {
-      type: RouterMoveType;
-      id: number;
-      fictionData: [];
-    };
-  };
-};
+      type: RouterMoveType
+      id: number
+      fictionData: []
+    }
+  }
+}

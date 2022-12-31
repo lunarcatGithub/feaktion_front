@@ -1,11 +1,14 @@
 import React, { useState, createContext, Dispatch, SetStateAction } from 'react'
 
 type getUserType = {
-  user_interest: {
-    id: number
+  data: {
     user_id: number
-    interest: string
-  }[]
+    user_interest: {
+      id: number
+      user_id: number
+      interest: string
+    }[]
+  }
 }
 type Arr = { index: number; value: string; title: string }[]
 type animationType = {

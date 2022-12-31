@@ -36,7 +36,9 @@ import { ScrollDirectionType } from '../types/LayoutType'
 import { OnScrollEvent } from '../types/CommonType'
 import { uploadType } from '~/Store/UploadStore'
 import getAgent from '~/Agent/GetAgent'
-import { getNovelsAgent, MainDataType } from '~/Agent/MainAgent'
+import { getNovelsAgent, MainDataType } from '~/Agent/FeaktionAgent'
+import { ComponentType } from '../Common/Genre'
+import { useFocusEffect } from '@react-navigation/native'
 
 type ScrollDataType = {
   id: number
@@ -50,6 +52,7 @@ type ScrollDataType = {
 
 export default function Main({
   navigation,
+  isFirstSignin,
 }: MainNavigationStackProps): JSX.Element {
   // enum type
   const { RECENTVIEW, GENREFICTION, SHORTUPLOADED, RECENTUPLOADED } =
@@ -67,8 +70,8 @@ export default function Main({
   const { HORIZON, LIST, VERTICAL } = ScrollDirectionType
 
   // ref
-  const retryRef = useRef<boolean>()
   const scrollRef = useRef(null)
+  const queryClient = useQueryClient()
 
   // fetch
   const mainGetData = getNovelsAgent({
@@ -76,18 +79,13 @@ export default function Main({
     url: `/feaktion`,
     option: { retry: true },
   })
-  // const mainGetData = useQuery(
-  //   ["fiction"],
-  //   () => useFetch({ url: '/feaktion', method: 'get' }),
-  //   { retry: true }
-  // )
 
   // context
   const {
     genreMaleArr,
     genreFemaleArr,
     toastPopup,
-    setToastPopup,
+    // setToastPopup,
     setIsToastPopup,
     setHeaderScroll,
     getUser,
@@ -161,7 +159,7 @@ export default function Main({
 
   const headerControl: OnScrollEvent = event => {
     const height = event.nativeEvent.contentOffset.y
-    setHeaderScroll(Math.floor(height))
+    // setHeaderScroll(Math.floor(height))
     if (310 < height) {
       setCurrentHeight(true)
       setToValue(1)
@@ -274,13 +272,13 @@ export default function Main({
 
   const dropdownHandler = (type: string) => {
     if (type === 'report') {
-      setToastPopup({
-        ...toastPopup,
-        type: 'ReportFiction',
-        modalType: 'ToastPopup',
-        data: reportFictionList,
-      })
-      setIsToastPopup(true)
+      // setToastPopup({
+      //   ...toastPopup,
+      //   type: 'ReportFiction',
+      //   modalType: 'ToastPopup',
+      //   data: reportFictionList,
+      // })
+      // setIsToastPopup(true)
       setIsModal(false) // small drop down remove
     }
   }
@@ -290,7 +288,7 @@ export default function Main({
       setMainData(mainGetData?.data)
       return
     }
-  }, [mainGetData?.data])
+  }, [])
 
   useEffect(() => {
     const back = BackHandler.addEventListener(
@@ -306,17 +304,13 @@ export default function Main({
     backHandler()
     return true
   }
+  console.log('isFirstSignin', isFirstSignin)
 
   useEffect(() => {
-    /** dev 임시 로그아웃 */
-    // setUserToken('')
-
     // 가입하자마자 장르 선택할 수 있게 하기
     // 장르가 선택되어 있다면 출력안함
-    return
-    if (!getUser) return
-
-    if (getUser?.user_interest?.length === 0) {
+    if (isFirstSignin !== true) return
+    const unsubscribe = navigation.addListener('focus', () => {
       navigation.navigate(SIDESTACK, {
         screen: GENRESELECT,
         params: {
@@ -324,8 +318,9 @@ export default function Main({
           selected: null,
         },
       })
-    } else return
-  }, [getUser])
+    })
+    return unsubscribe
+  }, [])
 
   const infinityDataHandler = (type: string) => {
     if (type !== 'RecentUploaded') return

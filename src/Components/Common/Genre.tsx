@@ -6,13 +6,14 @@ import { StackActions } from 'react-navigation'
 
 // hooks
 import { useAppContext, useUploadContext } from '~/Hooks/useContextHook'
-import useMutationHook from '~/Hooks/useMutationHook'
+import { MethodMytateEnum, useMutationHook } from '~/Hooks/useMutationHook'
 
 // components
 import { ExtraButton } from '../Button'
 import { Header } from '../Header/Header'
 import ModalPopup from '../Popup/Modal'
 import genreFilterUtil from '~/Utils/genreFilterUtil'
+import { patchhGenreAgent } from '~/Agent/FeaktionAgent'
 
 type genreList = {
   index: number
@@ -20,7 +21,7 @@ type genreList = {
   title: string
 }
 
-enum ComponentType {
+export enum ComponentType {
   UPLOADCOVER = 'UploadCover',
   SETTING = 'Setting',
   AUTH = 'Auth',
@@ -44,12 +45,12 @@ export function Genre({ navigation, route }: any): JSX.Element {
     oneMorePickGenre,
     setOneMorePickGenre,
   } = useAppContext()
-
+  const queryClient = useQueryClient()
   const { selectGenre, setSelectGenre } = useUploadContext()
 
   // fetch
-  const patchMutate = useMutationHook('patch')
-  const queryClient = useQueryClient()
+  const patchMutate = useMutationHook(MethodMytateEnum.PATCH)
+  // const patchMutate = useMutationHook(MethodMytateEnum.POST)
 
   // popup
   const [isPopup, setIsPopup] = useState(false)
@@ -73,7 +74,7 @@ export function Genre({ navigation, route }: any): JSX.Element {
     setResistPrevend(userPickGenre.length >= 3)
   }, [userPickGenre])
 
-  const submitHandler = () => {
+  const submitHandler = async () => {
     if (!resistPrevend) return
     const { UPLOADCOVER, AUTH, SETTING } = ComponentType
 
@@ -86,7 +87,7 @@ export function Genre({ navigation, route }: any): JSX.Element {
           genreType: 'genreModify',
         },
       })
-      console.log('userPickGenre', userPickGenre)
+
       setSelectGenre(userPickGenre)
       // setOneMorePickGenre(userPickGenre);
     }
@@ -121,21 +122,18 @@ export function Genre({ navigation, route }: any): JSX.Element {
         fetchedData: thirdPickGenre,
       })
 
-      patchMutate
-        .mutateAsync({ url: `/user/interest`, params })
-        .then(({ status }: { status: number }) => {
-          if ([200, 201].includes(status)) {
-            navi === SETTING
-              ? null
-              : queryClient.invalidateQueries(['myProfile'])
-
-            navigation.navigate(navi === 'Setting' ? 'Setting' : 'Bottom', {
-              screen: navi === 'Setting' ? 'MainSetting' : 'Main',
-              params: { genre: userPickGenre },
-            })
-          }
+      const result = await patchhGenreAgent({
+        mutate: patchMutate,
+        data: params,
+      })
+      if (result?.data) {
+        queryClient.invalidateQueries(['myProfile'])
+        navigation.navigate(navi === 'Setting' ? 'Setting' : 'Bottom', {
+          screen: navi === 'Setting' ? 'MainSetting' : 'Main',
+          params: { genre: userPickGenre },
         })
-      setThirdPickGenre(userPickGenre)
+      }
+      // setThirdPickGenre(userPickGenre)
     }
   }
 

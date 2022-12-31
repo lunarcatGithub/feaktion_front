@@ -70,8 +70,6 @@ export default function Login({ navigation }: any): JSX.Element {
     })
 
     if (!loginFetchResult?.type) {
-      console.log('loginFetchResult?.type', loginFetchResult?.type)
-      // asyncStorageHandler("SET", "token", )
       setUserToken(loginFetchResult)
       return
     }

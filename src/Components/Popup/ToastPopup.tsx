@@ -14,20 +14,12 @@ type modal = {
     | null
 }
 
-type listType = {
-  index: number
-  desc: string
-  value: string
-}[]
-
 export default function ToastPopup({
   data,
   onPress,
   type,
   modalType,
 }: modal): JSX.Element {
-  // const [title, setTitle] = useState([{}]);
-
   return (
     <Layout>
       <ButtonWrap>
@@ -46,7 +38,8 @@ export default function ToastPopup({
 const Layout = styled.View`
   width: 100%;
   background: ${({ theme }) => theme.color.gray6};
-  border-radius: 16px 16px 0 0;
+  border-top-left-radius: 16px;
+  border-top-right-radius: 16px;
   z-index: 99999;
 `
 
