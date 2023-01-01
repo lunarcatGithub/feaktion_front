@@ -127,17 +127,21 @@ export function Bottom({ state, navigation }: any): JSX.Element {
     // })
     setPopupVisible(true)
   }
-  const myProfileQueryData: any = queryClient.getQueryData(['myProfile'])
+
+  const myProfileQueryData:
+    | { data: { data: { user_id: number } } }
+    | undefined = queryClient.getQueryData(['myProfile'])
 
   const userBoardNavigationhandler = () => {
     if (!myProfileQueryData?.data) return
     const {
-      data: { data: id },
+      data: { data },
     } = myProfileQueryData
+
     navigation.navigate(NavigationScreenType.BOTTOM, {
       screen: NavigationScreenType.USERBOARD,
       params: {
-        userId: id,
+        userId: data?.user_id,
         type: 'isMe',
       },
     })

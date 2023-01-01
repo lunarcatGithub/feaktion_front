@@ -50,7 +50,7 @@ const useFetch = async ({
     return await axios(typeData)
   } catch (err: any) {
     console.error('Error:', err)
-    if (!err.response) return 500
+    if (!err.response) return { status: 500 }
     return err.response
   }
 }

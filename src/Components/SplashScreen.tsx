@@ -14,7 +14,6 @@ const Layout = styled.View`
   justify-content: center;
   align-items: center;
   background-color: ${({ theme }) => theme.color.black0};
-  z-index: 9999999;
 `
 
 const SplashImage = styled.Image`

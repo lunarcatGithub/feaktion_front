@@ -6,12 +6,11 @@ import MainBoard from './MainBoard'
 
 // hooks
 import { useAppContext } from '~/Hooks/useContextHook'
-import { useQuery } from 'react-query'
-import useFetch from '~/Hooks/useAxiosFetch'
 import { getUserAgent } from '~/Agent/UserAgent'
 
 export default function UserBoard({ navigation, route }: any): JSX.Element {
-  const { userId, type } = route?.params
+  const { userId } = route?.params
+
   // store
   const { setUserProfile } = useAppContext()
 
@@ -19,9 +18,9 @@ export default function UserBoard({ navigation, route }: any): JSX.Element {
   const userGetData = getUserAgent({
     key: ['userProfile'],
     url: `/user/${userId}`,
-    option: { retry: false },
+    option: { retry: true },
   })
-  console.log('userGetData ==> ', userGetData)
+
   const [isMe, setIsMe] = useState(false)
 
   const [userShortBoard, setUserShortBoard] = useState([])
@@ -29,16 +28,12 @@ export default function UserBoard({ navigation, route }: any): JSX.Element {
 
   useEffect(() => {
     if (!userGetData) return
-    // const userInfo = userGetData?.data
-
-    // if ([200, 201].includes(userInfo?.status)) {
-    //   const { data } = userInfo?.data
-    //   setUserProfile(data)
-    //   setUserShortBoard(data?.shorts)
-    //   setUserNovelsBoard(data?.novels)
-    //   setIsMe(data?.isMe)
-    // }
-  }, [])
+    const userInfo = userGetData?.data
+    setUserProfile(userInfo)
+    setUserShortBoard(userInfo?.shorts)
+    setUserNovelsBoard(userInfo?.novels)
+    setIsMe(userInfo?.isMe)
+  }, [userGetData?.data])
 
   return (
     <Layout>

@@ -25,7 +25,6 @@ import { NavigationContainer } from '@react-navigation/native'
 import { AuthContext } from '~/App'
 
 // hooks
-import { useAppContext } from '~/Hooks/useContextHook'
 import { getAgent } from '~/Agent/AuthAent'
 
 // context or Reducer
@@ -35,7 +34,6 @@ const BottomTabs = createBottomTabNavigator()
 
 const HOCRouter = (): JSX.Element => {
   const { userToken, setUserToken } = useContext(AuthContext)
-  const { setGetUser } = useAppContext()
   const [isLoading, setIsLoading] = useState(false)
   /**
    * HOC에 접근하기 전 로딩 스플래시 화면
@@ -61,8 +59,8 @@ const HOCRouter = (): JSX.Element => {
       method: MethodEnum.GET,
       key: 'token',
     })
-    console.log('axiosNetworkTest', axiosNetworkTest)
-    if (axiosNetworkTest === 'ERR_NETWORK') {
+
+    if (axiosNetworkTest === 'FAIL') {
       await asyncStorageUtil({
         method: MethodEnum.REMOVE,
         key: 'token',

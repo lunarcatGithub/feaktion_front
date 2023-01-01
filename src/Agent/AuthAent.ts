@@ -23,17 +23,24 @@ type GetType = {
 }
 
 export const getAgent = ({ url, option }: GetType) => {
-  const result: UseQueryResult<{ code?: string; status?: number }, unknown> =
-    useQuery([], () => useFetch({ url, method: 'get' }), option)
+  const result: UseQueryResult<any> = useQuery(
+    [],
+    () => useFetch({ url, method: 'get' }),
+    option
+  )
+  const stautsCode = result?.data?.status
 
-  if (result?.data?.code) {
-    return result.data.code
-  }
-
-  switch (result?.data?.status) {
+  switch (stautsCode) {
     case 200:
     case 201:
       return 'SUCCESS'
+    case 400:
+    case 401:
+    case 404:
+    case 500:
+    case 501:
+    case 502:
+      return 'FAIL'
     default:
       return 'LOADING'
   }

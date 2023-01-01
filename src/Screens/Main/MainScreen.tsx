@@ -16,7 +16,7 @@ export default function MainScreen({
   const [userInterest, setUserInterest] = useState<null | []>(null)
 
   const userGetData = getUserAgent({
-    key: ['userProfile'],
+    key: ['myProfile'],
     url: `/user`,
     option: { retry: false },
   })
