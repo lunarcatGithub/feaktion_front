@@ -21,23 +21,23 @@ export function useMutationHook(
 ): any {
   return useMutation(
     ({ url, params, data, headers }: mutateCallbackType) =>
-      useFetch({ url, method, type, headers, params, data }),
-    {
-      onMutate: params => {
-        console.log('onMutate', params)
-        return params
-        // variable : {loginId: 'xxx', password; 'xxx'}
-      },
-      onError: (error, params) => {
-        console.log('error', error, params)
-        // error
-      },
-      onSuccess: (data, params, context) => {
-        console.log('success', data, params, context)
-      },
-      onSettled: () => {
-        console.log('end')
-      },
-    }
+      useFetch({ url, method, type, headers, params, data })
+    // {
+    //   onMutate: params => {
+    //     console.log('onMutate', params)
+    //     return params
+    //     // variable : {loginId: 'xxx', password; 'xxx'}
+    //   },
+    //   onError: (error, params) => {
+    //     console.log('error', error, params)
+    //     // error
+    //   },
+    //   onSuccess: (data, params, context) => {
+    //     console.log('success', data, params, context)
+    //   },
+    //   onSettled: () => {
+    //     console.log('onSettled end')
+    //   },
+    // }
   )
 }

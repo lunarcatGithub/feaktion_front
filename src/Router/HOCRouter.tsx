@@ -25,11 +25,8 @@ import { NavigationContainer } from '@react-navigation/native'
 import { AuthContext } from '~/App'
 
 // hooks
-import { getUserAgent } from '~/Agent/UserAgent'
-import { useQuery } from 'react-query'
-import useFetch from '~/Hooks/useAxiosFetch'
 import { useAppContext } from '~/Hooks/useContextHook'
-import { Genre } from '~/Components/Common/Genre'
+import { getAgent } from '~/Agent/AuthAent'
 
 // context or Reducer
 const HOCStack = createNativeStackNavigator()
@@ -45,19 +42,31 @@ const HOCRouter = (): JSX.Element => {
    * user 데이터가 정상인지 먼저 요청 (서버에서 토큰 여부 결정하기 때문)
    */
 
-  const userGetData = getUserAgent({
-    key: ['myProfile'],
-    url: `/user`,
+  const axiosNetworkTest = getAgent({
+    url: `/`,
     option: { retry: true },
   })
 
   const loadingPointHandler = async () => {
+    // await asyncStorageUtil({
+    //   method: MethodEnum.REMOVE,
+    //   key: 'token',
+    // })
+    // setUserToken('')
     setIsLoading(true)
+    if (axiosNetworkTest === 'LOADING') {
+      setIsLoading(true)
+    }
     const resultToken = await asyncStorageUtil({
       method: MethodEnum.GET,
       key: 'token',
     })
-    if (!userGetData || userGetData?.isAuth === false) {
+    console.log('axiosNetworkTest', axiosNetworkTest)
+    if (axiosNetworkTest === 'ERR_NETWORK') {
+      await asyncStorageUtil({
+        method: MethodEnum.REMOVE,
+        key: 'token',
+      })
       setUserToken('')
       setIsLoading(false)
       return
@@ -69,9 +78,11 @@ const HOCRouter = (): JSX.Element => {
       return
     }
 
-    setGetUser(userGetData?.data)
-    setUserToken(resultToken)
-    setIsLoading(false)
+    if (axiosNetworkTest === 'SUCCESS') {
+      // setGetUser(userGetData?.data)
+      setUserToken(resultToken)
+      setIsLoading(false)
+    }
   }
 
   const TabsBottom = () => (
@@ -91,9 +102,8 @@ const HOCRouter = (): JSX.Element => {
   /**
    * 하단 탭 NAV 관리
    */
-  const isFirstSignin = userGetData?.data?.user_interest <= 0
   const TabsBottomList = [
-    { key: 0, name: 'Main', component: () => MainRouter(isFirstSignin) },
+    { key: 0, name: 'Main', component: MainRouter },
     { key: 1, name: 'MyFictionList', component: FictionListStackRouter },
     // { key: 2, name: 'Upload', component: DummyStackScreen },
     { key: 3, name: 'Store', component: ArchiveTopTabRouter },
@@ -125,7 +135,6 @@ const HOCRouter = (): JSX.Element => {
   const authDivideScreen = (): JSX.Element => {
     // 루트 진입할 때 스플래시 이미지 보여주기
     if (isLoading) return <SplashImageScreen />
-
     // 첫 로그인 or 장르 선택되어 있지 않을 때
     // if (userGetData?.isAuth === true && userGetData?.data.user_interest <= 0) {
     //   return <Genre navigation={navigation} route={route} />
@@ -154,7 +163,7 @@ const HOCRouter = (): JSX.Element => {
 
   useEffect(() => {
     loadingPointHandler()
-  }, [userGetData?.isAuth])
+  }, [axiosNetworkTest])
 
   return <NavigationContainer>{authDivideScreen()}</NavigationContainer>
 }

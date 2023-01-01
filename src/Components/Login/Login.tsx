@@ -32,7 +32,6 @@ export default function Login({ navigation }: any): JSX.Element {
 
   // fetch
   const loginMutate = useMutationHook(MethodMytateEnum.POST)
-
   const loginInputTextHandler = (type: string, text: string): void => {
     if (type === 'userId') {
       setLoginInput({ ...loginInput, userId: text })

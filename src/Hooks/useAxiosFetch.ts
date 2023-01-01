@@ -18,7 +18,7 @@ const useFetch = async ({
   type,
   headers,
   params,
-}: ParamsType): Promise<{ data: any }> => {
+}: ParamsType) => {
   console.log(`${Config.API_URL}${url}`, method, data, type, headers, params)
   // const divideEnvApi = `${Config.SERVER_API}:${Config.SERVER_PORT}`;
   const divideEnvApi = `http://10.0.2.2:8000`
@@ -46,16 +46,13 @@ const useFetch = async ({
           headers,
           data,
         }
-
-  return await axios(typeData)
-    .then(_data => {
-      console.log('fetch', _data)
-      return _data
-    })
-    .catch(err => {
-      console.warn(err)
-      return err?.response
-    })
+  try {
+    return await axios(typeData)
+  } catch (err: any) {
+    console.error('Error:', err)
+    if (!err.response) return 500
+    return err.response
+  }
 }
 
 export default useFetch

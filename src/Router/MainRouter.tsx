@@ -5,12 +5,12 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack'
 
 const MainStack = createNativeStackNavigator()
 
-export const MainRouter = (isFirstSignin: boolean): JSX.Element => {
+export const MainRouter = (): JSX.Element => {
   return (
     <MainStack.Navigator>
       <MainStack.Screen
         name="Main"
-        component={(props: any) => MainScreen({ ...props, isFirstSignin })}
+        component={MainScreen}
         options={{
           headerShown: false,
         }}

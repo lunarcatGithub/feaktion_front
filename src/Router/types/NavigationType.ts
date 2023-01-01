@@ -7,14 +7,7 @@ export enum NavigationScreenType {
   VIEWER = 'Viewer',
   GENRESELECT = 'GenreSelect',
   OTHERFICTIONLIST = 'OtherFictionList',
+  BOTTOM = 'Bottom',
+  AUTH = 'Auth',
+  LOGIN = 'Login',
 }
-
-export type SideStackScreen =
-  | 'GenreSelect'
-  | 'FictionIndex'
-  | 'Viewer'
-  | 'UserBoard';
-
-export type SideBottomStackScreen = 'OtherFictionList';
-
-export type ArchiveTopTabScreen = 'Preferred' | 'Continue';

@@ -126,6 +126,7 @@ export function Genre({ navigation, route }: any): JSX.Element {
         mutate: patchMutate,
         data: params,
       })
+      console.log('result ===>', result)
       if (result?.data) {
         queryClient.invalidateQueries(['myProfile'])
         navigation.navigate(navi === 'Setting' ? 'Setting' : 'Bottom', {

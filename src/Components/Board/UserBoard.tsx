@@ -8,37 +8,37 @@ import MainBoard from './MainBoard'
 import { useAppContext } from '~/Hooks/useContextHook'
 import { useQuery } from 'react-query'
 import useFetch from '~/Hooks/useAxiosFetch'
+import { getUserAgent } from '~/Agent/UserAgent'
 
-export default function UserBoard({ navigation, route }): JSX.Element {
+export default function UserBoard({ navigation, route }: any): JSX.Element {
   const { userId, type } = route?.params
-
   // store
   const { setUserProfile } = useAppContext()
 
   // fetch
-  const userData = useQuery(
-    [`userprofile`, userId],
-    () => useFetch({ url: `/user/${userId}`, method: 'get' }),
-    { enabled: true }
-  )
-
+  const userGetData = getUserAgent({
+    key: ['userProfile'],
+    url: `/user/${userId}`,
+    option: { retry: false },
+  })
+  console.log('userGetData ==> ', userGetData)
   const [isMe, setIsMe] = useState(false)
 
   const [userShortBoard, setUserShortBoard] = useState([])
   const [userNovelsBoard, setUserNovelsBoard] = useState([])
 
   useEffect(() => {
-    if (!userData) return
-    const userInfo = userData?.data
+    if (!userGetData) return
+    // const userInfo = userGetData?.data
 
-    if ([200, 201].includes(userInfo?.status)) {
-      const { data } = userInfo?.data
-      setUserProfile(data)
-      setUserShortBoard(data?.shorts)
-      setUserNovelsBoard(data?.novels)
-      setIsMe(data?.isMe)
-    }
-  }, [userData])
+    // if ([200, 201].includes(userInfo?.status)) {
+    //   const { data } = userInfo?.data
+    //   setUserProfile(data)
+    //   setUserShortBoard(data?.shorts)
+    //   setUserNovelsBoard(data?.novels)
+    //   setIsMe(data?.isMe)
+    // }
+  }, [])
 
   return (
     <Layout>

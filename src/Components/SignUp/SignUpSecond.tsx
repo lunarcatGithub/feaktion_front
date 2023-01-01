@@ -16,6 +16,7 @@ import { loginType } from 'authTypeModule'
 import { signupAgent, signupType } from '~/Agent/AuthAent'
 import { MethodMytateEnum, useMutationHook } from '~/Hooks/useMutationHook'
 import Header from '../Header/HeaderComponent'
+import { NavigationScreenType } from '~/Router/types/NavigationType'
 
 export default function SignUpSecond({ navigation }: any): JSX.Element {
   // store
@@ -110,6 +111,9 @@ export default function SignUpSecond({ navigation }: any): JSX.Element {
     const result = await signupAgent({ ...params })
 
     if (result.type === '') {
+      navigation.navigate(NavigationScreenType.AUTH, {
+        screen: NavigationScreenType.LOGIN,
+      })
     }
 
     setAlertText(result)

@@ -1,9 +1,8 @@
 import React, { useEffect, useState, useRef, useContext } from 'react'
 import styled from 'styled-components/native'
-import { useQuery, useQueryClient } from 'react-query'
+import { useQueryClient } from 'react-query'
 import { Animated, BackHandler } from 'react-native'
 import SystemSetting from 'react-native-system-setting'
-import useFetch from '@Hooks/useAxiosFetch'
 
 // components
 import MainHeader from '../Header/MainHeader'
@@ -17,6 +16,7 @@ import VerticalScroll from '../VerticalScroll/VerticalScroll'
 import TitleHeader from '../Common/TitleHeader'
 import ShortContent from '../Common/ShortContent'
 import { AuthContext } from '~/App'
+import { uploadType } from '~/Store/UploadStore'
 
 // hooks
 import { useAppContext, useAsyncContext } from '~/Hooks/useContextHook'
@@ -24,21 +24,17 @@ import useBackExit from '~/Hooks/useBackExit'
 
 // data
 import { isMedropdownList, isNotMedropdownList } from '~/Data/dropdownData'
-import { reportFictionList } from '~/Data/reportData'
 
 // type
-import { AsyncCallType } from '~/Context/types/contextType'
 import { MainNavigationStackProps } from '~/Router/types/MainRouterTypes'
 import { NavigationScreenType } from '~/Router/types/NavigationType'
 import { GenreType, ListFictionType } from '../types/FictionType'
 import { RouterMoveType } from '@Router/types/RouterType'
 import { ScrollDirectionType } from '../types/LayoutType'
 import { OnScrollEvent } from '../types/CommonType'
-import { uploadType } from '~/Store/UploadStore'
-import getAgent from '~/Agent/GetAgent'
+
+//agents
 import { getNovelsAgent, MainDataType } from '~/Agent/FeaktionAgent'
-import { ComponentType } from '../Common/Genre'
-import { useFocusEffect } from '@react-navigation/native'
 
 type ScrollDataType = {
   id: number
@@ -52,7 +48,6 @@ type ScrollDataType = {
 
 export default function Main({
   navigation,
-  isFirstSignin,
 }: MainNavigationStackProps): JSX.Element {
   // enum type
   const { RECENTVIEW, GENREFICTION, SHORTUPLOADED, RECENTUPLOADED } =
@@ -66,7 +61,6 @@ export default function Main({
     GENRESELECT,
   } = NavigationScreenType
 
-  const { FICTION, SHORT } = uploadType
   const { HORIZON, LIST, VERTICAL } = ScrollDirectionType
 
   // ref
@@ -208,8 +202,8 @@ export default function Main({
 
   const navigationHandler = (navi: string): void => {
     // 더보기 페이지로 이동
-    navigation.navigate(SIDEBOTTOMSTACK, {
-      screen: OTHERFICTIONLIST,
+    navigation.navigate(NavigationScreenType.SIDEBOTTOMSTACK, {
+      screen: NavigationScreenType.OTHERFICTIONLIST,
       params: { type: navi, fictionData: mainData?.novels },
     })
   }
@@ -223,14 +217,14 @@ export default function Main({
   }): void => {
     if (!contentType) return
     if (contentType === 'user') {
-      navigation.navigate(SIDESTACK, {
-        screen: USERBOARD,
+      navigation.navigate(NavigationScreenType.SIDESTACK, {
+        screen: NavigationScreenType.USERBOARD,
         params: { userId: id, type: 'otherUser' },
       })
     } else {
-      navigation.navigate(SIDESTACK, {
-        screen: FICTIONINDEX,
-        params: { currentType: FICTION, fictionId: id },
+      navigation.navigate(NavigationScreenType.SIDESTACK, {
+        screen: NavigationScreenType.FICTIONINDEX,
+        params: { currentType: uploadType.FICTION, fictionId: id },
       })
     }
   }
@@ -250,17 +244,17 @@ export default function Main({
   }): void => {
     switch (fictionType) {
       // 장편 시리즈 소설 목록 화면으로 이동
-      case FICTION:
+      case uploadType.FICTION:
         navigation.navigate(SIDESTACK, {
           screen: FICTIONINDEX,
-          params: { currentType: FICTION, fictionId },
+          params: { currentType: uploadType.FICTION, fictionId },
         })
         break
-      case SHORT:
+      case uploadType.SHORT:
         // 단편 뷰어로 이동
         navigation.navigate(SIDESTACK, {
           screen: 'Viewer',
-          params: { currentType: SHORT, fictionId },
+          params: { currentType: uploadType.SHORT, fictionId },
         })
         break
 
@@ -304,23 +298,6 @@ export default function Main({
     backHandler()
     return true
   }
-  console.log('isFirstSignin', isFirstSignin)
-
-  useEffect(() => {
-    // 가입하자마자 장르 선택할 수 있게 하기
-    // 장르가 선택되어 있다면 출력안함
-    if (isFirstSignin !== true) return
-    const unsubscribe = navigation.addListener('focus', () => {
-      navigation.navigate(SIDESTACK, {
-        screen: GENRESELECT,
-        params: {
-          navi: 'Auth',
-          selected: null,
-        },
-      })
-    })
-    return unsubscribe
-  }, [])
 
   const infinityDataHandler = (type: string) => {
     if (type !== 'RecentUploaded') return

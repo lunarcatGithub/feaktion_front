@@ -4,10 +4,11 @@ import { uploadType } from '~/Store/UploadStore'
 import { NavigationScreenType } from './NavigationType'
 
 type MainStackParamList = {
-  SideBottomStack: { screen: string; params?: { type: string } }
+  SideBottomStack?: { screen: string; params?: { type: string } }
+  Auth?: { screen: string; params?: { type: string } }
   SideStack: {
     screen: string
-    params: {
+    params?: {
       type?: string
       userId?: number
       navi?: 'Auth'
@@ -30,7 +31,9 @@ export type MainNavigationStackProps = {
       | 'FictionIndex'
       | 'GenreSelect'
       | 'OtherFictionList'
+      | 'Bottom'
+      | 'Auth'
+      | 'Login'
     >
   >
-  isFirstSignin: boolean
 }

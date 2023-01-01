@@ -26,13 +26,10 @@ import {
 } from '~/Hooks/useContextHook'
 
 // type
-import { AsyncCallType } from '~/Context/types/contextType'
-
 import { uploadType } from '~/Store/UploadStore'
-import { useQuery } from 'react-query'
-import useFetch from '~/Hooks/useAxiosFetch'
-import { AuthContext } from '~/App'
-import PopupBottomModal, { ValueEnum } from '../Modal/PopupBottomModal'
+import { useQueryClient } from 'react-query'
+import PopupBottomModal from '../Modal/PopupBottomModal'
+import { NavigationScreenType } from '~/Router/types/NavigationType'
 
 const UPLOAD_FICTION = 'UploadFiction'
 
@@ -42,12 +39,12 @@ export function Bottom({ state, navigation }: any): JSX.Element {
     toastPopup,
     setToastPopup,
     isToastPopup,
-    getUser,
+    // getUser,
     setIsToastPopup,
     setPutImageUrl,
     setGetImageUrl,
   } = useAppContext()
-
+  const queryClient = useQueryClient()
   const { setCurrentType } = useUploadContext()
 
   const [homeIcon, setHomeIcon] = useState<JSX.Element | null>(null)
@@ -130,12 +127,17 @@ export function Bottom({ state, navigation }: any): JSX.Element {
     // })
     setPopupVisible(true)
   }
+  const myProfileQueryData: any = queryClient.getQueryData(['myProfile'])
 
   const userBoardNavigationhandler = () => {
-    navigation.navigate('Bottom', {
-      screen: 'UserBoard',
+    if (!myProfileQueryData?.data) return
+    const {
+      data: { data: id },
+    } = myProfileQueryData
+    navigation.navigate(NavigationScreenType.BOTTOM, {
+      screen: NavigationScreenType.USERBOARD,
       params: {
-        userId: getUser?.data?.user_id,
+        userId: id,
         type: 'isMe',
       },
     })
