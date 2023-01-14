@@ -4,7 +4,7 @@ import bufferHandler from '~/Utils/bufferConvert'
 import genreFilterUtil from '~/Utils/genreFilterUtil'
 import imageSend from '~/Utils/imageSend'
 import { useAppContext, useUploadContext } from './useContextHook'
-import useMutationHook from './useMutationHook'
+import { useMutationHook } from './useMutationHook'
 
 type imagePromise = {
   index: number

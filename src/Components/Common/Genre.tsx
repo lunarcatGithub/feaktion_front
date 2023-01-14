@@ -13,7 +13,7 @@ import { ExtraButton } from '../Button'
 import { Header } from '../Header/Header'
 import ModalPopup from '../Popup/Modal'
 import genreFilterUtil from '~/Utils/genreFilterUtil'
-import { patchhGenreAgent } from '~/Agent/FeaktionAgent'
+import { patchGenreAgent } from '~/Agent/FeaktionAgent'
 
 type genreList = {
   index: number
@@ -122,7 +122,7 @@ export function Genre({ navigation, route }: any): JSX.Element {
         fetchedData: thirdPickGenre,
       })
 
-      const result = await patchhGenreAgent({
+      const result = await patchGenreAgent({
         mutate: patchMutate,
         data: params,
       })

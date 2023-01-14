@@ -235,7 +235,10 @@ export function Bottom({ state, navigation }: any): JSX.Element {
       setCurrentType(uploadType.FICTION)
     }
     setPopupVisible(!popupVisible)
-    navigation.navigate(UPLOAD_FICTION, { screen: navi, params: value })
+    navigation.navigate(UPLOAD_FICTION, {
+      screen: navi,
+      params: { feaktionType: value },
+    })
   }
 
   return (

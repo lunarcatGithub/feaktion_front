@@ -53,7 +53,7 @@ export const loginAgent = async ({ userId, password, mutate }: loginType) => {
     url: '/user/signin',
     data: { email: userId, password },
   })
-  console.log('loginResult', loginResult)
+
   let statusResult
   if (loginResult.code === 'ERR_NETWORK') {
     statusResult = 500

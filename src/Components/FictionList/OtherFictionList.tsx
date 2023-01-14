@@ -18,7 +18,9 @@ import { FictionType } from '../types/FictionType'
 import { useAppContext } from '~/Hooks/useContextHook'
 
 // fetch
-import useMutationHook from '~/Hooks/useMutationHook'
+import { MethodMytateEnum, useMutationHook } from '~/Hooks/useMutationHook'
+import { MyFictionNavigationStackProps } from '~/Router/types/MyFictionRouterTypes'
+import { getReadFeaktionAgent } from '~/Agent/FeaktionAgent'
 
 // type
 type routeType = {
@@ -31,7 +33,7 @@ type modalData = { index: number; desc: string; value: string }[] | null
 export default function OtherFictionList({
   navigation,
   route,
-}: SideBottomNavigationStackProps): JSX.Element {
+}: MyFictionNavigationStackProps): JSX.Element {
   const [currentRouteValue, setCurrentRouteValue] = useState<routeType>({
     title: '',
     navi: '',
@@ -64,18 +66,18 @@ export default function OtherFictionList({
     modalType: 'ToastPopup',
   })
 
-  // fetch
-  const { data, mutateAsync, isSuccess } = useMutationHook('get')
+  const mutate = useMutationHook(MethodMytateEnum.GET)
 
-  const getFeaktionDataHandler = async (pageNum: number) => {
+  // fetch
+  const getFeaktionDataHandler = async () => {
     const { type, id } = route.params
     try {
       switch (type) {
         case RouterMoveType.RECENTVIEW: // 최근 본 작품
-          mutateAsync({
-            url: `/feaktion/readed`,
-            params: {},
-          })
+          // mutateAsync({
+          //   url: `/feaktion/readed`,
+          //   params: {},
+          // })
 
           setCurrentRouteValue({
             title: '최근 본 작품',
@@ -84,10 +86,13 @@ export default function OtherFictionList({
           break
 
         case RouterMoveType.GENREFICTION:
-          mutateAsync({
+          const data = await getReadFeaktionAgent({
             url: `/feaktion/interestgenre`,
-            params: {},
           })
+          // mutateAsync({
+          //   url: `/feaktion/interestgenre`,
+          //   params: {},
+          // })
 
           setCurrentRouteValue({
             title: '장르 추천 작품',
@@ -96,17 +101,17 @@ export default function OtherFictionList({
           break
 
         case RouterMoveType.RECENTUPLOADED:
-          if (pageNum === 0) return
+          // if (pageNum === 0) return
 
-          mutateAsync({
-            url: `/feaktion/novels`,
-            params: {
-              take: 6,
-              feaktion_id:
-                // viewFeaktionData[viewFeaktionData.length - 1].feaktion_id,
-                3,
-            },
-          })
+          // mutateAsync({
+          //   url: `/feaktion/novels`,
+          //   params: {
+          //     take: 6,
+          //     feaktion_id:
+          //       // viewFeaktionData[viewFeaktionData.length - 1].feaktion_id,
+          //       3,
+          //   },
+          // })
 
           setCurrentRouteValue({
             title: '최신 작품',
@@ -115,10 +120,10 @@ export default function OtherFictionList({
           break
 
         case RouterMoveType.SHORTUPLOADED:
-          mutateAsync({
-            url: `/feaktion/shorts`,
-            params: {},
-          })
+          // mutateAsync({
+          //   url: `/feaktion/shorts`,
+          //   params: {},
+          // })
 
           setCurrentRouteValue({
             title: '단편 작품',
@@ -127,10 +132,15 @@ export default function OtherFictionList({
           break
 
         case RouterMoveType.MYFICTION:
-          mutateAsync({
-            url: `/feaktion/myfeaktions${currentFeaktionType}`,
-            params: {},
+          console.log('currentFeaktionType ====>', currentFeaktionType)
+          const readedFeaktion = await getReadFeaktionAgent({
+            url: `/feaktion/myfeaktions`,
+            // url: `/feaktion/myfeaktions`,
+            mutate,
+            option: { retry: true },
           })
+
+          console.log('data ====>', readedFeaktion)
 
           setCurrentRouteValue({
             title: '등록 작품',
@@ -139,10 +149,10 @@ export default function OtherFictionList({
           break
 
         case RouterMoveType.USERBOARDEPISODE:
-          mutateAsync({
-            url: `/user/${id}/novels`,
-            params: {},
-          })
+          // mutateAsync({
+          //   url: `/user/${id}/novels`,
+          //   params: {},
+          // })
 
           setCurrentRouteValue({
             title: '연재 작품 더보기',
@@ -151,10 +161,10 @@ export default function OtherFictionList({
           break
 
         case RouterMoveType.USERBOARDSHORT:
-          mutateAsync({
-            url: `/user/${id}/shorts`,
-            params: {},
-          })
+          // mutateAsync({
+          //   url: `/user/${id/shorts`,
+          //   params: {},
+          // })
 
           setCurrentRouteValue({
             title: '단편 작품 더보기',
@@ -172,7 +182,7 @@ export default function OtherFictionList({
 
   useEffect(() => {
     setPage(0)
-    getFeaktionDataHandler(1)
+    getFeaktionDataHandler()
   }, [])
 
   useEffect(() => {
@@ -203,7 +213,7 @@ export default function OtherFictionList({
     } else {
       setViewFeaktionData(feaktionData?.data)
     }
-  }, [page, isSuccess])
+  }, [page])
 
   const moreButtonHandler = ({ position }: { position: number }) => {
     // 더보기 버튼 활성화
@@ -259,7 +269,7 @@ export default function OtherFictionList({
 
   const InfinityDataHandler = () => {
     const pageAdd = page + 1
-    getFeaktionDataHandler(pageAdd)
+    getFeaktionDataHandler()
     setPage(() => pageAdd)
   }
 

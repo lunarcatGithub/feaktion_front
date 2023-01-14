@@ -11,7 +11,7 @@ import { AuthContext } from '~/App'
 export default function MainScreen({
   navigation,
 }: MainNavigationStackProps): JSX.Element {
-  const { userToken, setUserToken } = useContext(AuthContext)
+  const { setUserToken } = useContext(AuthContext)
   const [isLoading, setIsLoading] = useState(true)
   const [userInterest, setUserInterest] = useState<null | []>(null)
 

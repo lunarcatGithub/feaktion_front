@@ -10,7 +10,10 @@ import { FictionType } from '~/Components/types/FictionType'
 // >;
 
 type SideBottomStackParamList = {
-  SideBottomStack: { screen: string; params?: { type: string } }
+  SideBottomStack: {
+    screen: string
+    params?: { type: string; fictionData: any }
+  }
   SideStack: {
     screen: string
     params: {
@@ -46,13 +49,19 @@ export type SideBottomNavigationStackProps = {
       | 'FictionIndex'
       | 'GenreSelect'
       | 'OtherFictionList'
+      | 'SideStack'
+      | 'SideBottomStack'
+      | 'UserBoard'
+      | 'Bottom'
+      | 'Auth'
+      | 'Login'
     >
   >
   route: {
     params: {
       type: RouterMoveType
+      fictionData: any
       id: number
-      fictionData: []
     }
   }
 }

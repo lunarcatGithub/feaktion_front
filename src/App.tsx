@@ -1,9 +1,9 @@
 import React, {
-  useState,
-  createContext,
-  useEffect,
-  Dispatch,
-  SetStateAction,
+    useState,
+    createContext,
+    useEffect,
+    Dispatch,
+    SetStateAction,
 } from 'react'
 import { requestNotifications } from 'react-native-permissions'
 
@@ -29,50 +29,52 @@ const queryClient = new QueryClient()
 
 // types
 type authPatch = {
-  setUserToken: Dispatch<SetStateAction<string>>
-  userToken: string
+    setUserToken: Dispatch<SetStateAction<string>>
+    userToken: string
 }
 
 export const AuthContext = createContext<authPatch>({
-  setUserToken: () => {},
-  userToken: '',
+    setUserToken: () => {},
+    userToken: '',
 })
 
 const App = (): JSX.Element => {
-  // hooks
-  const [userToken, setUserToken] = useState<string>('')
-  // console.log('userData', userData)
+    // hooks
+    const [userToken, setUserToken] = useState<string>('')
+    // console.log('userData', userData)
 
-  // Global styled
-  const customTextProps = {
-    style: {
-      fontSize: 14,
-      fontFamily: 'NotoSansCJKkr-Regular',
-      lineHeight: 14 * 1.4,
-    },
-  }
+    // Global styled
+    const customTextProps = {
+        style: {
+            fontSize: 14,
+            fontFamily: 'NotoSansCJKkr-Regular',
+            lineHeight: 14 * 1.4,
+        },
+    }
 
-  useEffect(() => {
-    SplashScreen.hide()
-    setCustomText(customTextProps)
-    requestNotifications(['alert', 'sound']).then(({ status, settings }) => {
-      usePermission()
-    })
-  }, [])
+    useEffect(() => {
+        SplashScreen.hide()
+        setCustomText(customTextProps)
+        requestNotifications(['alert', 'sound']).then(
+            ({ status, settings }) => {
+                usePermission()
+            }
+        )
+    }, [])
 
-  return (
-    <ThemeProvider theme={theme}>
-      <QueryClientProvider client={queryClient}>
-        <AuthContext.Provider value={{ setUserToken, userToken }}>
-          <AllStores>
-            <KeyboardAvoid>
-              <HOCRouter />
-            </KeyboardAvoid>
-          </AllStores>
-        </AuthContext.Provider>
-      </QueryClientProvider>
-    </ThemeProvider>
-  )
+    return (
+        <ThemeProvider theme={theme}>
+            <QueryClientProvider client={queryClient}>
+                <AuthContext.Provider value={{ setUserToken, userToken }}>
+                    <AllStores>
+                        <KeyboardAvoid>
+                            <HOCRouter />
+                        </KeyboardAvoid>
+                    </AllStores>
+                </AuthContext.Provider>
+            </QueryClientProvider>
+        </ThemeProvider>
+    )
 }
 
 export default App

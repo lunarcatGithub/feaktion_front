@@ -4,7 +4,10 @@ import { uploadType } from '~/Store/UploadStore'
 import { NavigationScreenType } from './NavigationType'
 
 type MainStackParamList = {
-  SideBottomStack?: { screen: string; params?: { type: string } }
+  SideBottomStack?: {
+    screen: string
+    params?: { type: string; fictionData: any }
+  }
   Auth?: { screen: string; params?: { type: string } }
   SideStack: {
     screen: string

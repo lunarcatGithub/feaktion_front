@@ -16,7 +16,7 @@ export default function UserBoard({ navigation, route }: any): JSX.Element {
 
   // fetch
   const userGetData = getUserAgent({
-    key: ['userProfile'],
+    key: ['userProfile', userId],
     url: `/user/${userId}`,
     option: { retry: true },
   })

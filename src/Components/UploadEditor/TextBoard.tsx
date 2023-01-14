@@ -36,7 +36,7 @@ export default function TextBoard({
 }: props): JSX.Element {
   const scroll = useRef(null)
   const textRef = useRef<React.RefObject<TextInput>>(null)
-  console.log('currentRoute', currentRoute)
+
   // store
   const { fictionData, currentScene, bodyInputDetect, setBodyInputDetect } =
     useUploadContext()
@@ -155,7 +155,7 @@ const EditorTitleInput = styled.TextInput<{ heightSize: number }>`
 `
 
 const BodyEditorText = styled.TextInput<{ _position: boolean }>`
-  text-align: ${({ _position }) => !_position && 'center'};
+  text-align: ${({ _position }) => (!_position ? 'center' : 'left')};
   font-size: ${({ theme }) => theme.fontSize.font14};
   color: ${({ theme }) => theme.color.gray3};
   letter-spacing: -0.2px;

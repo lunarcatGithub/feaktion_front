@@ -45,7 +45,6 @@ export default function MainBoard({
 
   // store
   const { userProfile, getImageUrl } = useAppContext()
-  // stroe
   const { setFictionData, setModifyUploadData, setCurrentType } =
     useUploadContext()
 
@@ -61,6 +60,9 @@ export default function MainBoard({
   ]
 
   const [currentTime] = useDateTimeConvert(userProfile?.regdate, 'JustDate')
+  const [profileImage, setProfileImage] = useState<string | undefined>(
+    undefined
+  )
 
   // state
   const [propsFictionData, setPropsFictionData] = useState<{
@@ -176,6 +178,11 @@ export default function MainBoard({
   ]
 
   useEffect(() => {
+    // user profile image
+    setProfileImage(getImageUrl + userProfile?.profile || undefined)
+  }, [getImageUrl])
+
+  useEffect(() => {
     setIsPopup(false)
     setIsModal(false)
   }, [])
@@ -200,7 +207,7 @@ export default function MainBoard({
             <UserProfileWrap>
               <UserProfile
                 source={{
-                  uri: getImageUrl + userProfile?.profile || undefined,
+                  uri: profileImage,
                 }}
               />
             </UserProfileWrap>

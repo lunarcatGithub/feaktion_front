@@ -293,7 +293,7 @@ export default function FictionEditor({ navigation, route }: any) {
             previewMicVoice={previewMicVoice}
             setHeaderHide={setHeaderHide}
           />
-          {Platform.OS === 'ios' ? null : (
+          {/* {Platform.OS === 'ios' ? null : (
             <MicWrap>
               <MicEditor
                 setMicVoice={setMicVoice}
@@ -302,7 +302,7 @@ export default function FictionEditor({ navigation, route }: any) {
                 // voiceHandler={voiceHandler}
               />
             </MicWrap>
-          )}
+          )} */}
         </Layout>
       </TouchableWithoutFeedback>
       <Dropdown
