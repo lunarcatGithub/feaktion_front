@@ -19,7 +19,7 @@ export type GenreDataType =
           data: {}
           refetch: () => void
       }
-    | undefined
+    | {}
 
 // const getQuery = ({ params, option }: PropsType) => {
 //   return useQuery(
@@ -79,7 +79,7 @@ export const patchGenreAgent = async ({
     })
     const statusCode = resultQuery.status
 
-    if (resultQuery.data === null) return undefined
+    if (resultQuery.data === null) return {}
     switch (statusCode) {
         case 200:
         case 201:
@@ -87,17 +87,17 @@ export const patchGenreAgent = async ({
 
         case 400:
         case 401:
-            return undefined
+            return {}
 
         case 404:
-            return undefined
+            return {}
 
         case 500:
         case 501:
-            return undefined
+            return {}
 
         default:
-            break
+            return {}
     }
 }
 
@@ -110,8 +110,7 @@ export const getUploadedCoverAgent = ({ fictionId, option }: any) => {
 
     const isSuccess = resultQuery.status
     const queryData = resultQuery.data
-    console.log('queryData', queryData)
-    if (isSuccess !== 'success') return undefined
+    if (isSuccess !== 'success') return {}
     switch (queryData.status) {
         case 200:
         case 201:
@@ -119,14 +118,14 @@ export const getUploadedCoverAgent = ({ fictionId, option }: any) => {
 
         case 400:
         case 401:
-            return undefined
+            return {}
 
         case 404:
-            return undefined
+            return {}
 
         case 500:
         case 501:
-            return undefined
+            return {}
 
         default:
             break
@@ -145,7 +144,7 @@ export const getReadFeaktionAgent = async ({ mutate, option, url }: any) => {
 
     const statusCode = resultQuery.status
 
-    if (resultQuery.data === null) return undefined
+    if (resultQuery.data === null) return {}
     switch (statusCode) {
         case 200:
         case 201:
@@ -153,14 +152,14 @@ export const getReadFeaktionAgent = async ({ mutate, option, url }: any) => {
 
         case 400:
         case 401:
-            return undefined
+            return {}
 
         case 404:
-            return undefined
+            return {}
 
         case 500:
         case 501:
-            return undefined
+            return {}
 
         default:
             break
@@ -181,7 +180,7 @@ export const getFeakitonEpisode = ({ fictionId, episodeId }: any) => {
     const isSuccess = resultQuery.status
     const queryData = resultQuery.data
     console.log('queryData', queryData)
-    if (isSuccess !== 'success') return undefined
+    if (isSuccess !== 'success') return {}
     switch (queryData.status) {
         case 200:
         case 201:
@@ -189,14 +188,14 @@ export const getFeakitonEpisode = ({ fictionId, episodeId }: any) => {
 
         case 400:
         case 401:
-            return undefined
+            return {}
 
         case 404:
-            return undefined
+            return {}
 
         case 500:
         case 501:
-            return undefined
+            return {}
 
         default:
             break

@@ -8,19 +8,13 @@ import { useViewerContext } from '~/Hooks/useContextHook'
 import BigHeart from '@Icons/bigUnHeart.svg'
 import BigHeartOn from '@Icons/heartOn.svg'
 import useToggleFetchHook from '~/Hooks/useToggleFetchHook'
+import { viewDataType } from '~/Store/ViewStore'
 
-type props = {
-    data: {
-        isLoading: boolean
-        episode_title: string
-        scenes: []
-        episode_like: { like_id: number | undefined }[]
-        feaktion_user: { nickname: string }
-        writer_comment: string
-    }
-}
-
-export default function ViewReact({ data }: props): JSX.Element {
+export default function ViewReact({
+    data,
+}: {
+    data: viewDataType
+}): JSX.Element {
     const [like, likeBtnHandler] = useToggleFetchHook({
         type: 'like',
         initid: data?.episode_like[0]?.like_id || null,

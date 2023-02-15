@@ -9,6 +9,7 @@ import useFetch from '~/Hooks/useAxiosFetch'
 import {
     getFeakitonEpisode,
     getUploadedCoverAgent,
+    viewIndexAgent,
 } from '~/Agent/FeaktionAgent'
 
 type curReadItems = {
@@ -87,31 +88,31 @@ export default function View({ navigation, route }: any) {
 
     // store
     useEffect(() => {
-        asyncHandler('GET', JSON.stringify(fictionId))
-        optAsyncHandler('GET', 'textOpt')
+        // asyncHandler('GET', JSON.stringify(fictionId))
+        // optAsyncHandler('GET', 'textOpt')
     }, [])
 
     useEffect(() => {
-        if (!_result) return
-        const parseData = JSON.parse(_result?.result)
-        const lastParse = JSON.parse(parseData)
-        setIsRead(lastParse)
-    }, [_result])
+        // if (!_result) return
+        // const parseData = JSON.parse(_result?.result)
+        // const lastParse = JSON.parse(parseData)
+        // setIsRead(lastParse)
+    }, [])
 
-    useEffect(() => {
-        // 세팅한 초기 text opt 적용
+    // useEffect(() => {
+    //     // 세팅한 초기 text opt 적용
 
-        if (_Optresult) {
-            const storageText = JSON.parse(JSON.parse(_Optresult?.result))
-            setAdjustViewText({ ...adjustViewText, ...storageText })
-        } else {
-            setAdjustViewText(adjustViewText)
-        }
-    }, [_Optresult])
+    //     if (_Optresult) {
+    //         const storageText = JSON.parse(JSON.parse(_Optresult?.result))
+    //         setAdjustViewText({ ...adjustViewText, ...storageText })
+    //     } else {
+    //         setAdjustViewText(adjustViewText)
+    //     }
+    // }, [_Optresult])
 
-    useEffect(() => {
-        setEpisodePostId(episodeId || epiId)
-    }, [episodeId, epiId])
+    // useEffect(() => {
+    //     setEpisodePostId(episodeId || epiId)
+    // }, [episodeId, epiId])
 
     // useEffect(() => {
     //   // 읽었는지 여부
@@ -141,14 +142,6 @@ export default function View({ navigation, route }: any) {
     //   }
     // }, [episodePostId, isRead]);
 
-    useEffect(() => {
-        if (!curReadItems) return
-        asyncHandler(
-            'SET',
-            JSON.stringify(fictionId),
-            JSON.stringify(curReadItems)
-        )
-    }, [isRead, curReadItems])
     return (
         <>
             {currentType !== 'Preview' ? (

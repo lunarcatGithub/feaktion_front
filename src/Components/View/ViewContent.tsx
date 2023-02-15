@@ -14,6 +14,9 @@ import Animated, {
     withSpring,
     withTiming,
 } from 'react-native-reanimated'
+import { useQueryClient } from 'react-query'
+import { GestureHandlerRootView } from 'react-native-gesture-handler'
+import SystemSetting from 'react-native-system-setting'
 
 // components
 import ViewList from './ViewList'
@@ -34,14 +37,13 @@ import {
     useUploadContext,
 } from '~/Hooks/useContextHook'
 import { MethodMytateEnum, useMutationHook } from '~/Hooks/useMutationHook'
-import ToastPush from '../Interaction/ToastPush'
+// import ToastPush from '../Interaction/ToastPush'
 import useDebounce from '~/Hooks/useDebounce'
 import ViewIndexCover from './ViewIndexCover'
 import useAsyncStorage from '~/Hooks/useAsyncStorage'
-import SystemSetting from 'react-native-system-setting'
+
 import { uploadType } from '~/Store/UploadStore'
-import { useQueryClient } from 'react-query'
-import { GestureHandlerRootView } from 'react-native-gesture-handler'
+import { viewDataType } from '~/Store/ViewStore'
 
 // type
 type sceneArrType = {
@@ -55,19 +57,20 @@ type sceneArrType = {
 type modalData = { index: number; desc: string; value: string }[] | null
 type props = {
     navigation: any
-    data: {
-        isLoading: boolean
-        episode_title: string
-        episodeTitle: string
-        scenes: []
-        episode_like: { like_id: number | undefined }[]
-        feaktion_user: { nickname: string }
-        writer_comment: string
-    }
+    // data: {
+    //     isLoading: boolean
+    //     episode_title: string
+    //     episodeTitle: string
+    //     scenes: []
+    //     episode_like: { like_id: number | undefined }[]
+    //     feaktion_user: { nickname: string }
+    //     writer_comment: string
+    // }
+    data: viewDataType
     currentType: string
     fictionId: number
     episodeId: number
-    coverData?: { feaktion_title: string }
+    coverData?: { feaktion_title: string; isWriter: boolean }
     scroll?: number
     isUploaded?: any
 }
@@ -461,10 +464,6 @@ export default function ViewContent({
         opacityImage.value = withTiming(1, { duration: 500 })
     }
 
-    // const dropdownLayout = (e:LayoutChangeEvent) => {
-    //   setDropdownHeight(e.nativeEvent.layout.height)
-    // };
-
     const scrollDebounce: boolean | undefined = useDebounce(hideBottom)
 
     useEffect(() => {
@@ -510,6 +509,7 @@ export default function ViewContent({
             </>
         )
     }
+    console.log('finalData', finalData)
 
     return (
         <GestureHandlerRootView style={{ flex: 1 }}>
@@ -526,12 +526,14 @@ export default function ViewContent({
                     data={data}
                     isUploaded={isUploaded}
                 />
-                {/* {finalData?.length === 0 && <Skeleton />} */}
                 <LayoutInner onTouchStart={() => setHideBottom(false)}>
                     <BackgroundWrap>{curImage}</BackgroundWrap>
                     <ViewerList
                         ref={scrollRef}
-                        keyExtractor={useCallback((_, i) => `pages__${i}`, [])}
+                        keyExtractor={useCallback(
+                            (_: any, i: number) => `pages__${i}`,
+                            []
+                        )}
                         onEndReachedThreshold={1}
                         ListFooterComponent={
                             currentType === 'Preview' ? (

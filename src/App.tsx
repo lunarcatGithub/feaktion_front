@@ -41,7 +41,6 @@ export const AuthContext = createContext<authPatch>({
 const App = (): JSX.Element => {
     // hooks
     const [userToken, setUserToken] = useState<string>('')
-    // console.log('userData', userData)
 
     // Global styled
     const customTextProps = {

@@ -44,7 +44,7 @@ export default function ViewList({
     currentType,
     currentView,
     layoutheight,
-    setLayoutHeight: setLayoutheight,
+    setLayoutHeight,
 }: props): JSX.Element {
     const { title, scene, index, epititle } = data?.item
     const windowHeight = Math.floor(Dimensions.get('window').height)
@@ -100,6 +100,8 @@ export default function ViewList({
             opacityText.value = 0
         }
     }, [currentView])
+    console.log('currentView', currentView)
+    console.log('opacityImage.value', opacityImage.value)
 
     useEffect(() => {
         let color: { first: number; second: number; last: number }
@@ -157,6 +159,8 @@ export default function ViewList({
         setPragraph(foundPos)
     }, [adjustViewText?.spacepragraph])
 
+    console.log('title', title)
+
     const titleHandler = () => {
         const divideType = currentType === 'Preview' ? index === 1 : index === 0
         return (
@@ -183,7 +187,8 @@ export default function ViewList({
         const { layout } = e.nativeEvent
         _layoutheight.push({ index, height: layout.height })
         console.log('layoutheight ==>', layoutheight, _layoutheight)
-        setLayoutheight([...layoutheight, ..._layoutheight])
+        // const test = [...layoutheight, ..._layoutheight]
+        setLayoutHeight(_layoutheight)
     }
     return (
         <Animated.View
